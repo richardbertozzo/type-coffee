@@ -18,6 +18,10 @@ func (c Coffee) String() string {
 	return fmt.Sprintf("ID: %s - Name: %s", c.UUID, c.Name)
 }
 
+func (c Coffee) IsZero() bool {
+	return c.UUID == ""
+}
+
 type Caracteristic struct {
 	Name string
 }
