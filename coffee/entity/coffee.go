@@ -5,12 +5,15 @@ import (
 	"fmt"
 )
 
-var errNameBlank = errors.New("Name is blank")
+var (
+	errNameBlank = errors.New("Name is blank")
+)
 
 // Coffee represent the entity of a Coffee
 type Coffee struct {
 	UUID           string
 	Name           string
+	Description    string
 	caracteristics []Caracteristic
 }
 
@@ -20,10 +23,6 @@ func (c Coffee) String() string {
 
 func (c Coffee) IsZero() bool {
 	return c.UUID == ""
-}
-
-type Caracteristic struct {
-	Name string
 }
 
 func New(uuid, name string, c []Caracteristic) (Coffee, error) {
