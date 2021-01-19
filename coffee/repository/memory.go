@@ -12,13 +12,16 @@ type memoryDB struct {
 }
 
 func NewMemoryDB() coffee.Repository {
-	return memoryDB{}
+	m := map[string]entity.Coffee{}
+	return memoryDB{
+		coffees: m,
+	}
 }
 
 func (m memoryDB) GetByID(id string) (entity.Coffee, error) {
 	c := m.coffees[id]
 	if c.IsZero() {
-		return c, errors.New("Coupon not exists")
+		return c, errors.New("Coffee not exists")
 	}
 
 	return c, nil
