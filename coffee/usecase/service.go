@@ -12,7 +12,9 @@ type useCase struct {
 }
 
 func NewService(db coffee.Repository) coffee.UseCase {
-	return useCase{}
+	return useCase{
+		db: db,
+	}
 }
 
 func (u useCase) GetByID(id string) (entity.Coffee, error) {
