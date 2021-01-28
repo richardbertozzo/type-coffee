@@ -6,34 +6,38 @@ import (
 )
 
 type Caracteristic struct {
-	Name string
+	name string
+}
+
+func (c Caracteristic) String() string {
+	return c.name
 }
 
 var (
 	Strong = Caracteristic{
-		Name: "forte",
+		name: "forte",
 	}
 	Weak = Caracteristic{
-		Name: "fraco",
+		name: "fraco",
 	}
 	Suable = Caracteristic{
-		Name: "suave",
+		name: "suave",
 	}
 	FullBodied = Caracteristic{
-		Name: "encorpado",
+		name: "encorpado",
 	}
 	Sweat = Caracteristic{
-		Name: "doce",
+		name: "doce",
 	}
 	Creamy = Caracteristic{
-		Name: "cremoso",
+		name: "cremoso",
 	}
 	Unknown = Caracteristic{
-		Name: "desconhecido",
+		name: "desconhecido",
 	}
 )
 
-func newCaracteristic(s string) (Caracteristic, error) {
+func NewCaracteristic(s string) (Caracteristic, error) {
 	switch s {
 	case strings.ToLower("forte"):
 		return Strong, nil
@@ -60,7 +64,7 @@ func NewCaracteristics(caracStr []string) ([]Caracteristic, error) {
 	caracs := []Caracteristic{}
 	errs := []error{}
 	for _, c := range caracStr {
-		carac, err := newCaracteristic(c)
+		carac, err := NewCaracteristic(c)
 		caracs = append(caracs, carac)
 		errs = append(errs, err)
 	}
