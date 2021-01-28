@@ -7,7 +7,7 @@ import (
 
 // Coffee represent the entity of a Coffee
 type Coffee struct {
-	UUID           string
+	ID             string
 	Name           string
 	Image          Link
 	Description    string
@@ -15,11 +15,11 @@ type Coffee struct {
 }
 
 func (c Coffee) String() string {
-	return fmt.Sprintf("ID: %s - Name: %s", c.UUID, c.Name)
+	return fmt.Sprintf("ID: %s - Name: %s", c.ID, c.Name)
 }
 
 func (c Coffee) IsZero() bool {
-	return c.UUID == ""
+	return c.ID == ""
 }
 
 func (c Coffee) Caracteristics() []Caracteristic {
@@ -36,7 +36,7 @@ func New(uuid, name, d string, l Link, c []Caracteristic) (Coffee, error) {
 	}
 
 	return Coffee{
-		UUID:           uuid,
+		ID:             uuid,
 		Name:           name,
 		Image:          l,
 		Description:    d,
