@@ -13,8 +13,16 @@ type Coffee struct {
 }
 
 type Repository interface {
+	Reader
+	Writer
+}
+
+type Reader interface {
 	GetByID(id string) (entity.Coffee, error)
 	ListByCaracteristic(entity.Caracteristic) ([]entity.Coffee, error)
+}
+
+type Writer interface {
 	Save(entity.Coffee) error
 }
 
