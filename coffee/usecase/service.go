@@ -73,7 +73,7 @@ func convertCoffee(c entity.Coffee) coffee.Coffee {
 	}
 
 	return coffee.Coffee{
-		UUID:           c.UUID,
+		UUID:           c.ID,
 		Name:           c.Name,
 		Description:    c.Description,
 		Image:          c.Image.String(),
