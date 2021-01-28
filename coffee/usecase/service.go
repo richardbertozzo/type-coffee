@@ -67,11 +67,16 @@ func (u useCase) ListByCaracteristic(caStr string) (cos []coffee.Coffee, err err
 }
 
 func convertCoffee(c entity.Coffee) coffee.Coffee {
+	casStr := []string{}
+	for _, ca := range c.Caracteristics() {
+		casStr = append(casStr, ca.String())
+	}
+
 	return coffee.Coffee{
 		UUID:           c.UUID,
 		Name:           c.Name,
 		Description:    c.Description,
 		Image:          c.Image.String(),
-		Caracteristics: c.Caracteristics(),
+		Caracteristics: casStr,
 	}
 }
