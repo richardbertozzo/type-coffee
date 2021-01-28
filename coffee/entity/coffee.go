@@ -22,11 +22,8 @@ func (c Coffee) IsZero() bool {
 	return c.UUID == ""
 }
 
-func (c Coffee) Caracteristics() (caracs []string) {
-	for _, c := range c.caracteristics {
-		caracs = append(caracs, c.String())
-	}
-	return
+func (c Coffee) Caracteristics() []Caracteristic {
+	return c.caracteristics
 }
 
 func New(uuid, name, d string, l Link, c []Caracteristic) (Coffee, error) {
