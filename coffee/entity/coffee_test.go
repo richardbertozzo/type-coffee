@@ -1,53 +1,70 @@
 package entity
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
-func TestNewCoffee(t *testing.T) {
-	t.Run("Must create a valid coffee", func(t *testing.T) {
-		c := []Caracteristic{
-			{
-				Name: "carac 1",
-			},
-			{
-				Name: "carac 2",
-			},
-		}
-		c1, err := New("123", "Café Teste", c)
-		if err != nil {
-			t.Errorf("Must not return a error, but got %v", err)
-		}
-		t.Log(c1)
-	})
+func TestNew(t *testing.T) {
+	validLink, _ := NewImageLink("https://rollingstone.uol.com.br/media/_versions/godzilla-kingking-reprod-twitter-cortada_widelg.jpg")
+	caracs, _ := NewCaracteristics([]string{"fraco"})
 
-	t.Run("Must create an invalid coffee", func(t *testing.T) {
-		c := []Caracteristic{
-			{
-				Name: "carac 1",
-			},
-			{
-				Name: "carac 2",
-			},
-		}
-		c1, err := New("123", "", c)
-		if err != errNameBlank {
-			t.Errorf("Must return a error and must be blank name error, but got %v", err)
-		}
-		t.Log(c1)
-	})
+	caracsZero, _ := NewCaracteristics([]string{})
 
-	t.Run("Must create an invalid coffee", func(t *testing.T) {
-		c := []Caracteristic{
-			{
-				Name: "carac 1",
+	type args struct {
+		uuid string
+		name string
+		d    string
+		l    Link
+		c    []Caracteristic
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    Coffee
+		wantErr bool
+	}{
+		{
+			name: "Create a valid coffee",
+			args: args{
+				uuid: "1234",
+				name: "Café iguaçu",
+				d:    "Café lavado",
+				l:    validLink,
+				c:    caracs,
 			},
-			{
-				Name: "carac 2",
+			want: Coffee{
+				UUID:           "1234",
+				Name:           "Café iguaçu",
+				Description:    "Café lavado",
+				Image:          validLink,
+				caracteristics: caracs,
 			},
-		}
-		c1, err := New("123", "", c)
-		if err != errNameBlank {
-			t.Errorf("Must return a error and must be blank name error, but got %v", err)
-		}
-		t.Log(c1)
-	})
+			wantErr: false,
+		},
+		{
+			name: "Create a invalid coffee",
+			args: args{
+				uuid: "1234",
+				name: "Café iguaçu",
+				d:    "Café lavado",
+				l:    validLink,
+				c:    caracsZero,
+			},
+			want:    Coffee{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := New(tt.args.uuid, tt.args.name, tt.args.d, tt.args.l, tt.args.c)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("New() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
