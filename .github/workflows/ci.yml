@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+      - uses: actions/checkout@v2
+      - name: Lint
+        run: |
+          go get -u golang.org/x/lint/golint 
+          golint -set_exit_status $(shell go list ./... | grep -v /vendor/)
+          
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.15
+
+    - name: Build
+      run: make build
+
+  test:
+    name: test
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.14
+      - uses: actions/checkout@v2
+      - name: Run tests
+        run: go test ./...

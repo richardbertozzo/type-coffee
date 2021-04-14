@@ -34,7 +34,7 @@ func TestNew(t *testing.T) {
 				c:    caracs,
 			},
 			want: Coffee{
-				UUID:           "1234",
+				ID:             "1234",
 				Name:           "Café iguaçu",
 				Description:    "Café lavado",
 				Image:          validLink,
