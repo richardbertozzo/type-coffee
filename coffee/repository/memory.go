@@ -28,7 +28,7 @@ func (m memoryDB) GetByID(id string) (entity.Coffee, error) {
 }
 
 func (m memoryDB) Save(c entity.Coffee) error {
-	m.coffees[c.UUID] = c
+	m.coffees[c.ID] = c
 	return nil
 }
 
