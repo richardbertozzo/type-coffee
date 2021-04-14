@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// Link represent the entity of a Link
 type Link struct {
 	l string
 }
@@ -15,10 +16,12 @@ func (l Link) String() string {
 	return l.l
 }
 
+// IsZero returns if link is nil/empty
 func (l Link) IsZero() bool {
 	return l == Link{}
 }
 
+// NewImageLink create a new image link entity value object
 func NewImageLink(s string) (Link, error) {
 	u, err := url.ParseRequestURI(s)
 	if err != nil {

@@ -11,6 +11,7 @@ type useCase struct {
 	db coffee.Repository
 }
 
+// NewService returns a new coffee use case
 func NewService(db coffee.Repository) coffee.UseCase {
 	return useCase{
 		db: db,

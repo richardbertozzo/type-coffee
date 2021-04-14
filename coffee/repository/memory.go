@@ -11,6 +11,7 @@ type memoryDB struct {
 	coffees map[string]entity.Coffee
 }
 
+// NewMemoryDB returns an in memory database implements the Coffee repository
 func NewMemoryDB() coffee.Repository {
 	m := map[string]entity.Coffee{}
 	return memoryDB{

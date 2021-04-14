@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// Caracteristic represent the entity of a coffee caracteristic, example: strong
 type Caracteristic struct {
 	name string
 }
@@ -14,48 +15,50 @@ func (c Caracteristic) String() string {
 }
 
 var (
-	Strong = Caracteristic{
+	strong = Caracteristic{
 		name: "forte",
 	}
-	Weak = Caracteristic{
+	weak = Caracteristic{
 		name: "fraco",
 	}
-	Suable = Caracteristic{
+	suable = Caracteristic{
 		name: "suave",
 	}
-	FullBodied = Caracteristic{
+	fullBodied = Caracteristic{
 		name: "encorpado",
 	}
-	Sweat = Caracteristic{
+	sweat = Caracteristic{
 		name: "doce",
 	}
-	Creamy = Caracteristic{
+	creamy = Caracteristic{
 		name: "cremoso",
 	}
-	Unknown = Caracteristic{
+	unknown = Caracteristic{
 		name: "desconhecido",
 	}
 )
 
+// NewCaracteristic creates a Caracteristic
 func NewCaracteristic(s string) (Caracteristic, error) {
 	switch s {
 	case strings.ToLower("forte"):
-		return Strong, nil
+		return strong, nil
 	case strings.ToLower("fraco"):
-		return Weak, nil
+		return weak, nil
 	case strings.ToLower("suave"):
-		return Suable, nil
+		return suable, nil
 	case strings.ToLower("encorpado"):
-		return FullBodied, nil
+		return fullBodied, nil
 	case strings.ToLower("doce"):
-		return Sweat, nil
+		return sweat, nil
 	case strings.ToLower("cremoso"):
-		return Creamy, nil
+		return creamy, nil
 	default:
-		return Unknown, errors.New("Caracteristic is unknown")
+		return unknown, errors.New("Caracteristic is unknown")
 	}
 }
 
+// NewCaracteristics creates a slice of Caracteristics
 func NewCaracteristics(caracStr []string) ([]Caracteristic, error) {
 	if len(caracStr) <= 0 {
 		return []Caracteristic{}, errors.New("Caracterics must be greater than zero")
