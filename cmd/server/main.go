@@ -2,44 +2,35 @@ package main
 
 import (
 	"log"
+	"net/http"
+	"os"
 
-	"github.com/richardbertozzo/type-coffee/coffee"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
+	"github.com/richardbertozzo/type-coffee/coffee/handler"
 	"github.com/richardbertozzo/type-coffee/coffee/repository"
 	"github.com/richardbertozzo/type-coffee/coffee/usecase"
 )
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = ":3000"
+	}
+
 	db := repository.NewMemoryDB()
 	uc := usecase.NewService(db)
+	h := handler.NewHandler(uc)
 
-	c1 := coffee.Coffee{
-		UUID:           "1234",
-		Name:           "Cafe teste",
-		Image:          "https://rollingstone.uol.com.br/media/_versions/godzilla-kingking-reprod-twitter-cortada_widelg.jpg",
-		Description:    "dkajkdjajdsjadjsa",
-		Caracteristics: []string{"fraco"},
-	}
-	err := uc.Create(c1)
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Get("/coffee", h.ListCoffee)
+	r.Get("/coffee/{id}", h.GetCoffeeByID)
+	r.Post("/coffee", h.CreateCoffee)
+
+	log.Printf("http server runs on %s \n", port)
+	err := http.ListenAndServe(port, r)
 	if err != nil {
-		log.Fatal(err)
-	}
-
-	c2, err := uc.GetByID(c1.UUID)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Printf("Nome: %s - Link: %s", c2.Name, c2.Image)
-
-	c3 := coffee.Coffee{
-		UUID:           "1234",
-		Name:           "Teste 2",
-		Image:          "https://rollingstone.uol.com.br/media/_versions/godzilla-kingking-reprod-twitter-cortada_widelg.png",
-		Description:    "",
-		Caracteristics: []string{"jsdjasjdasjjdsasjk"},
-	}
-	err = uc.Create(c3)
-	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error on start http server %v", err)
 	}
 }
