@@ -43,3 +43,10 @@ func (m memoryDB) ListByCaracteristic(c1 entity.Caracteristic) (cos []entity.Cof
 	}
 	return
 }
+
+func (m memoryDB) List() (cos []entity.Coffee, err error) {
+	for _, c := range m.coffees {
+		cos = append(cos, c)
+	}
+	return
+}

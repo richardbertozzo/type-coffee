@@ -22,6 +22,7 @@ type Repository interface {
 // Reader the reader methods to get coffee data
 type Reader interface {
 	GetByID(id string) (entity.Coffee, error)
+	List() ([]entity.Coffee, error)
 	ListByCaracteristic(entity.Caracteristic) ([]entity.Coffee, error)
 }
 
@@ -34,5 +35,6 @@ type Writer interface {
 type UseCase interface {
 	GetByID(id string) (Coffee, error)
 	Create(Coffee) error
+	List() ([]Coffee, error)
 	ListByCaracteristic(c string) ([]Coffee, error)
 }
