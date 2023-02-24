@@ -38,6 +38,8 @@ var (
 	}
 )
 
+// Aroma	Flavor	Aftertaste	Acidity	Body
+
 // NewCaracteristic creates a Caracteristic
 func NewCaracteristic(s string) (Caracteristic, error) {
 	switch s {
@@ -61,7 +63,7 @@ func NewCaracteristic(s string) (Caracteristic, error) {
 // NewCaracteristics creates a slice of Caracteristics
 func NewCaracteristics(caracStr []string) ([]Caracteristic, error) {
 	if len(caracStr) <= 0 {
-		return []Caracteristic{}, errors.New("Caracterics must be greater than zero")
+		return []Caracteristic{}, errors.New("Characteristics must be greater than zero")
 	}
 
 	caracs := []Caracteristic{}

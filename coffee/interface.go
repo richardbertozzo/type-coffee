@@ -1,6 +1,8 @@
 package coffee
 
 import (
+	"context"
+
 	"github.com/richardbertozzo/type-coffee/coffee/entity"
 )
 
@@ -37,4 +39,25 @@ type UseCase interface {
 	Create(Coffee) error
 	List() ([]Coffee, error)
 	ListByCaracteristic(c string) ([]Coffee, error)
+}
+
+type Option struct {
+	Message string
+	Details interface{}
+}
+
+type BestCoffees struct {
+	GivenCharacteristics []Characteristic
+	OptionsChatGPT       []Option
+	OptionsDatabase      []Option
+}
+
+type Filter struct {
+	Characteristics []Characteristic
+	Limit           int
+	Sort            bool // 0 = desc - 1 = asc
+}
+
+type Provider interface {
+	GetBestCoffees(context.Context, Filter) ([]Option, error)
 }
