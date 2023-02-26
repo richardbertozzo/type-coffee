@@ -1,0 +1,7 @@
+package: coffee
+generate:
+  chi-server: true
+  embedded-spec: true
+output: coffee/openapi_server.gen.go
+output-options:
+  skip-prune: true

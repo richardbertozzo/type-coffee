@@ -1,9 +1,9 @@
 PROJECTNAME := $(shell basename "$(PWD)")
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 
-## lint: Run the lint in projet
+## lint: Run the lint
 lint:
-	golint -set_exit_status ${PKG_LIST}
+	go vet ${PKG_LIST}
 
 ## build: Build the server binary to execute
 build:
@@ -24,6 +24,12 @@ coverage:
 ## coverage-html: Generate the report in HTML of test coverage
 coverage-html:
 	go tool cover -html=coverage.out -o coverage.html 
+
+.PHONY: gen-go-openapi-code
+gen-go-openapi-code:
+	mkdir -p coffee/handler
+	oapi-codegen --config configs/openapi/types.yml api/openapi.yaml
+	oapi-codegen --config configs/openapi/server.yml api/openapi.yaml
 
 .PHONY: help
 all: help
