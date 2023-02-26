@@ -1,9 +1,9 @@
 PROJECTNAME := $(shell basename "$(PWD)")
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 
-## lint: Run the lint in projet
+## lint: Run the lint
 lint:
-	golint -set_exit_status ${PKG_LIST}
+	go vet ${PKG_LIST}
 
 ## build: Build the server binary to execute
 build:
