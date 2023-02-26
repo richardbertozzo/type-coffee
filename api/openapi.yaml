@@ -1,0 +1,90 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Best Type of coffee API
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8080/v1
+paths:
+  /coffee:
+    get:
+      summary: Get the right type of coffee
+      operationId: getBestTypeCoffee
+      tags:
+        - Coffee
+      parameters:
+        - name: characteristics
+          in: query
+          description: Characteristics to build your best type of coffee, up to 3 selected characteristics.
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Characteristic"
+      responses:
+        '200':
+          description: The best coffee options
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BestCoffee"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    BestCoffee:
+      type: object
+      required:
+        - characteristics
+        - openai
+      properties:
+        characteristics:
+          type: array
+          items:
+            $ref: "#/components/schemas/Characteristic"
+        openai:
+          type: array
+          items:
+            $ref: "#/components/schemas/Option"
+        database:
+          type: array
+          items:
+            $ref: "#/components/schemas/Option"
+
+
+    Option:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+        details:
+          type: object
+
+    Characteristic:
+      type: string
+      enum:
+        - acidity
+        - aftertaste
+        - aroma
+        - body
+        - flavor
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
