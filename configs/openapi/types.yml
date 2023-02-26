@@ -1,0 +1,6 @@
+package: coffee
+generate:
+  models: true
+output-options:
+  skip-prune: true
+output: coffee/openapi_types.gen.go
