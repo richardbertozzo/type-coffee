@@ -11,6 +11,11 @@ type memoryDB struct {
 	coffees map[string]entity.Coffee
 }
 
+func (m memoryDB) ListByCaracteristic(characteristic coffee.Characteristic) ([]entity.Coffee, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 // NewMemoryDB returns an in memory database implements the Coffee repository
 func NewMemoryDB() coffee.Repository {
 	m := map[string]entity.Coffee{}
@@ -31,17 +36,6 @@ func (m memoryDB) GetByID(id string) (entity.Coffee, error) {
 func (m memoryDB) Save(c entity.Coffee) error {
 	m.coffees[c.ID] = c
 	return nil
-}
-
-func (m memoryDB) ListByCaracteristic(c1 entity.Caracteristic) (cos []entity.Coffee, err error) {
-	for _, c := range m.coffees {
-		for _, carac := range c.Caracteristics() {
-			if c1 == carac {
-				cos = append(cos, c)
-			}
-		}
-	}
-	return
 }
 
 func (m memoryDB) List() (cos []entity.Coffee, err error) {
