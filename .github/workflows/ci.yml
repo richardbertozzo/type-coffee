@@ -17,9 +17,7 @@ jobs:
           go-version: 1.19
       - uses: actions/checkout@v3
       - name: Lint
-        run: |
-          go get -u golang.org/x/lint/golint 
-          make lint
+        run: make lint
           
   build:
     runs-on: ubuntu-latest
