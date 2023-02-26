@@ -6,15 +6,6 @@ import (
 	"github.com/richardbertozzo/type-coffee/coffee/entity"
 )
 
-// Coffee represents the Coffee entity with all characteristics
-type Coffee struct {
-	UUID           string
-	Name           string
-	Image          string
-	Description    string
-	Caracteristics []string
-}
-
 // Repository the methods to write and read of Coffee (database abstraction)
 type Repository interface {
 	Reader
@@ -25,7 +16,7 @@ type Repository interface {
 type Reader interface {
 	GetByID(id string) (entity.Coffee, error)
 	List() ([]entity.Coffee, error)
-	ListByCaracteristic(entity.Caracteristic) ([]entity.Coffee, error)
+	ListByCaracteristic(Characteristic) ([]entity.Coffee, error)
 }
 
 // Writer the writer methods of coffee database
@@ -35,21 +26,13 @@ type Writer interface {
 
 // UseCase the usecases/business rules layer
 type UseCase interface {
-	GetByID(id string) (Coffee, error)
-	Create(Coffee) error
-	List() ([]Coffee, error)
-	ListByCaracteristic(c string) ([]Coffee, error)
+	GetBestCoffees(context.Context, Filter) (*BestCoffees, error)
 }
 
-type Option struct {
+// OptionProvider mean a selected option coffee
+type OptionProvider struct {
 	Message string
 	Details interface{}
-}
-
-type BestCoffees struct {
-	GivenCharacteristics []Characteristic
-	OptionsChatGPT       []Option
-	OptionsDatabase      []Option
 }
 
 type Filter struct {
@@ -59,5 +42,5 @@ type Filter struct {
 }
 
 type Provider interface {
-	GetBestCoffees(context.Context, Filter) ([]Option, error)
+	GetCoffeeOptionsByCharacteristics(context.Context, Filter) ([]OptionProvider, error)
 }

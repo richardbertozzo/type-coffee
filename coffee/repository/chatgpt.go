@@ -39,7 +39,7 @@ type openAIClient struct {
 	apiKey string
 }
 
-func New(apiKey string) (coffee.Provider, error) {
+func NewChatGPTProvider(apiKey string) (coffee.Provider, error) {
 	return &openAIClient{
 		http:   &http.Client{},
 		apiKey: apiKey,
@@ -49,14 +49,14 @@ func New(apiKey string) (coffee.Provider, error) {
 func getPrompt(carats []coffee.Characteristic) string {
 	var cs []string
 	for _, c := range carats {
-		cs = append(cs, c.String())
+		cs = append(cs, string(c))
 	}
 
 	finalCharacteristics := strings.Join(cs, " ")
 	return fmt.Sprintf(promptTemplate, finalCharacteristics)
 }
 
-func (c *openAIClient) GetBestCoffees(ctx context.Context, filter coffee.Filter) ([]coffee.Option, error) {
+func (c *openAIClient) GetCoffeeOptionsByCharacteristics(ctx context.Context, filter coffee.Filter) ([]coffee.OptionProvider, error) {
 	prompt := getPrompt(filter.Characteristics)
 	fmt.Println(prompt)
 
@@ -92,9 +92,9 @@ func (c *openAIClient) GetBestCoffees(ctx context.Context, filter coffee.Filter)
 		return nil, fmt.Errorf("error parsing response payload: %s", err.Error())
 	}
 
-	opts := make([]coffee.Option, len(respBody.Choices))
+	opts := make([]coffee.OptionProvider, len(respBody.Choices))
 	for i, choice := range respBody.Choices {
-		opts[i] = coffee.Option{
+		opts[i] = coffee.OptionProvider{
 			Message: choice.Text,
 		}
 	}
