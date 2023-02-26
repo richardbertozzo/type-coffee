@@ -20,14 +20,23 @@ func main() {
 	if port == "" {
 		port = ":3000"
 	}
+	chatGptKey := os.Getenv("CHAT_GPT_KEY")
+	if chatGptKey == "" {
+		log.Fatal("CHAT_GPT_KEY ENV is required")
+	}
 
 	swagger, err := coffee.GetSwagger()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	db := repository.NewMemoryDB()
-	uc := usecase.NewService(db)
+	swagger.Servers = nil
+
+	provider, err := repository.NewChatGPTProvider(chatGptKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+	uc := usecase.NewService(provider)
 	h := handler.NewHandler(uc)
 
 	r := chi.NewRouter()
