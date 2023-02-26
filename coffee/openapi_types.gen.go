@@ -12,11 +12,11 @@ const (
 	Flavor     Characteristic = "flavor"
 )
 
-// BestCoffee defines model for BestCoffee.
-type BestCoffee struct {
+// BestCoffees defines model for BestCoffees.
+type BestCoffees struct {
 	Characteristics []Characteristic `json:"characteristics"`
+	ChatGpt         []Option         `json:"chat_gpt"`
 	Database        *[]Option        `json:"database,omitempty"`
-	Openai          []Option         `json:"openai"`
 }
 
 // Characteristic defines model for Characteristic.
