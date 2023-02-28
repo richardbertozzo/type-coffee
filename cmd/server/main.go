@@ -11,7 +11,7 @@ import (
 
 	"github.com/richardbertozzo/type-coffee/coffee"
 	"github.com/richardbertozzo/type-coffee/coffee/handler"
-	"github.com/richardbertozzo/type-coffee/coffee/repository"
+	"github.com/richardbertozzo/type-coffee/coffee/service"
 	"github.com/richardbertozzo/type-coffee/coffee/usecase"
 )
 
@@ -32,7 +32,7 @@ func main() {
 
 	swagger.Servers = nil
 
-	provider, err := repository.NewChatGPTProvider(chatGptKey)
+	provider, err := service.NewChatGPTProvider(chatGptKey)
 	if err != nil {
 		log.Fatal(err)
 	}

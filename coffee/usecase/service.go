@@ -8,11 +8,11 @@ import (
 )
 
 type useCase struct {
-	chatGPTProvider coffee.Provider
+	chatGPTProvider coffee.Service
 }
 
 // NewService returns a new coffee use case
-func NewService(chatGPTProvider coffee.Provider) coffee.UseCase {
+func NewService(chatGPTProvider coffee.Service) coffee.UseCase {
 	return useCase{
 		chatGPTProvider: chatGPTProvider,
 	}

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/richardbertozzo/type-coffee/coffee"
-	"github.com/richardbertozzo/type-coffee/coffee/repository"
+	"github.com/richardbertozzo/type-coffee/coffee/service"
 	"github.com/richardbertozzo/type-coffee/coffee/usecase"
 )
 
@@ -21,7 +21,7 @@ func main() {
 		log.Fatal("CHAT_GPT_KEY ENV is required")
 	}
 
-	provider, err := repository.NewChatGPTProvider(chatGPTKey)
+	provider, err := service.NewChatGPTProvider(chatGPTKey)
 	if err != nil {
 		panic(err)
 	}
