@@ -36,7 +36,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	uc := usecase.NewService(provider)
+	uc := usecase.NewUseCase(provider)
 	h := handler.NewHandler(uc)
 
 	r := chi.NewRouter()
