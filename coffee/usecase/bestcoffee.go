@@ -11,8 +11,8 @@ type useCase struct {
 	chatGPTProvider coffee.Service
 }
 
-// NewUseCase returns a new coffee use case
-func NewUseCase(chatGPTProvider coffee.Service) coffee.UseCase {
+// New returns a new coffee use case
+func New(chatGPTProvider coffee.Service) coffee.UseCase {
 	return useCase{
 		chatGPTProvider: chatGPTProvider,
 	}

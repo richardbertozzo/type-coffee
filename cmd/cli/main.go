@@ -26,7 +26,7 @@ func main() {
 		panic(err)
 	}
 
-	uc := usecase.NewUseCase(provider)
+	uc := usecase.New(provider)
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Minute*2)
 	defer cancelFunc()
 
