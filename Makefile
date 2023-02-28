@@ -31,6 +31,10 @@ gen-go-openapi-code:
 	oapi-codegen --config configs/openapi/types.yml api/openapi.yaml
 	oapi-codegen --config configs/openapi/server.yml api/openapi.yaml
 
+.PHONY: gen-go-sql-code
+gen-go-sql-code:
+	sqlc generate --file configs/db/sqlc.yaml
+
 .PHONY: help
 all: help
 help: Makefile
