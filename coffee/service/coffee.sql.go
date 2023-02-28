@@ -3,7 +3,7 @@
 //   sqlc v1.16.0
 // source: coffee.sql
 
-package repository
+package service
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package repository
+package service
 
 import (
 	"bytes"
@@ -39,7 +39,7 @@ type openAIClient struct {
 	apiKey string
 }
 
-func NewChatGPTProvider(apiKey string) (coffee.Provider, error) {
+func NewChatGPTProvider(apiKey string) (coffee.Service, error) {
 	return &openAIClient{
 		http:   &http.Client{},
 		apiKey: apiKey,
