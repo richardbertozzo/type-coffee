@@ -76,6 +76,7 @@ components:
         - aroma
         - body
         - flavor
+        - sweetness
 
     Error:
       type: object

@@ -10,6 +10,7 @@ const (
 	Aroma      Characteristic = "aroma"
 	Body       Characteristic = "body"
 	Flavor     Characteristic = "flavor"
+	Sweetness  Characteristic = "sweetness"
 )
 
 // BestCoffees defines model for BestCoffees.
