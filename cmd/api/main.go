@@ -29,7 +29,7 @@ func main() {
 
 	var dbService coffee.Service
 	dbURL := os.Getenv("DATABASE_URL")
-	if dbURL == "" {
+	if dbURL != "" {
 		log.Println("database mode service enabled")
 		dbPool, err := database.NewConnection(context.Background(), dbURL)
 		if err != nil {
