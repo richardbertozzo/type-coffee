@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -13,6 +14,7 @@ import (
 	"github.com/richardbertozzo/type-coffee/coffee/handler"
 	"github.com/richardbertozzo/type-coffee/coffee/service"
 	"github.com/richardbertozzo/type-coffee/coffee/usecase"
+	"github.com/richardbertozzo/type-coffee/infra/database"
 )
 
 func main() {
@@ -25,6 +27,17 @@ func main() {
 		log.Fatal("CHAT_GPT_KEY ENV is required")
 	}
 
+	var dbService coffee.Service
+	dbURL := os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		log.Println("database mode service enabled")
+		dbPool, err := database.NewConnection(context.Background(), dbURL)
+		if err != nil {
+			log.Fatal(err)
+		}
+		dbService = service.NewDatabaseService(dbPool)
+	}
+
 	swagger, err := coffee.GetSwagger()
 	if err != nil {
 		log.Fatal(err)
@@ -32,11 +45,12 @@ func main() {
 
 	swagger.Servers = nil
 
-	provider, err := service.NewChatGPTProvider(chatGptKey)
+	chatGPTService, err := service.NewChatGPTProvider(chatGptKey)
 	if err != nil {
 		log.Fatal(err)
 	}
-	uc := usecase.New(provider)
+
+	uc := usecase.New(chatGPTService, dbService)
 	h := handler.NewHandler(uc)
 
 	r := chi.NewRouter()
