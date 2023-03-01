@@ -30,7 +30,7 @@ coverage-html:
 gen-go-openapi-code:
 	mkdir -p coffee/handler
 	oapi-codegen --config configs/openapi/types.yml api/openapi.yaml
-	oapi-codegen --config configs/openapi/api.yml api/openapi.yaml
+	oapi-codegen --config configs/openapi/server.yml api/openapi.yaml
 
 .PHONY: gen-go-sql-code
 gen-go-sql-code:
