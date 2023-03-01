@@ -1,5 +1,6 @@
 PROJECTNAME := $(shell basename "$(PWD)")
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
+DATABASE := typecoffee
 
 ## lint: Run the lint
 lint:
@@ -34,6 +35,20 @@ gen-go-openapi-code:
 .PHONY: gen-go-sql-code
 gen-go-sql-code:
 	sqlc generate --file configs/db/sqlc.yaml
+
+.PHONY: pg-up
+pg-up:
+	docker run \
+		--name postgres \
+		-p 5432:5432 \
+		-e POSTGRES_USER=root \
+		-e POSTGRES_PASSWORD=secret \
+		-e POSTGRES_DB=${DATABASE} \
+		-d --rm postgres:14
+
+.PHONY: pg-down
+pg-down:
+	docker stop postgres
 
 .PHONY: help
 all: help
