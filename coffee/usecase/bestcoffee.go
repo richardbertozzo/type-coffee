@@ -8,13 +8,17 @@ import (
 )
 
 type useCase struct {
-	chatGPTProvider coffee.Service
+	chatGPTProvider  coffee.Service
+	dbService        coffee.Service
+	dbServiceEnabled bool
 }
 
 // New returns a new coffee use case
-func New(chatGPTProvider coffee.Service) coffee.UseCase {
-	return useCase{
-		chatGPTProvider: chatGPTProvider,
+func New(chatGPTProvider, dbService coffee.Service) *useCase {
+	return &useCase{
+		chatGPTProvider:  chatGPTProvider,
+		dbService:        dbService,
+		dbServiceEnabled: dbService != nil,
 	}
 }
 
@@ -29,6 +33,11 @@ func (u useCase) GetBestCoffees(ctx context.Context, filter coffee.Filter) (*cof
 	opts, err := u.chatGPTProvider.GetCoffeeOptionsByCharacteristics(ctx, filter)
 	if err != nil {
 		return nil, err
+	}
+
+	if u.dbServiceEnabled {
+		// todo make it concurrent
+		u.dbService.GetCoffeeOptionsByCharacteristics(ctx, filter)
 	}
 
 	options := make([]coffee.Option, len(opts))
