@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/richardbertozzo/type-coffee/infra/database"
 	"log"
 	"time"
 
@@ -13,20 +14,30 @@ import (
 )
 
 func main() {
-	var chatGPTKey string
-	flag.StringVar(&chatGPTKey, "CHAT_GPT_KEY", "", "Chat GPT API Key is required")
+	var chatGPTKey, dbURL string
+	flag.StringVar(&chatGPTKey, "CHAT_GPT_KEY", "", "Chat GPT API Key value")
+	flag.StringVar(&dbURL, "DATABASE_URL", "", "Database URL value")
 	flag.Parse()
 
 	if chatGPTKey == "" {
 		log.Fatal("CHAT_GPT_KEY ENV is required")
 	}
-
 	provider, err := service.NewChatGPTProvider(chatGPTKey)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	uc := usecase.New(provider)
+	var dbService coffee.Service
+	if dbURL != "" {
+		log.Println("database mode service enabled")
+		dbPool, err := database.NewConnection(context.Background(), dbURL)
+		if err != nil {
+			log.Fatal(err)
+		}
+		dbService = service.NewDatabaseService(dbPool)
+	}
+
+	uc := usecase.New(provider, dbService)
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Minute*2)
 	defer cancelFunc()
 
