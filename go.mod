@@ -12,4 +12,5 @@ require (
 	github.com/jackc/pgconn v1.14.0
 	github.com/jackc/pgtype v1.14.0
 	github.com/jackc/pgx/v4 v4.18.1
+	golang.org/x/sync v0.1.0
 )
