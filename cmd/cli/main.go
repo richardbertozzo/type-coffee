@@ -4,13 +4,15 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/richardbertozzo/type-coffee/infra/database"
 	"log"
 	"time"
+
+	"github.com/AlecAivazis/survey/v2"
 
 	"github.com/richardbertozzo/type-coffee/coffee"
 	"github.com/richardbertozzo/type-coffee/coffee/service"
 	"github.com/richardbertozzo/type-coffee/coffee/usecase"
+	"github.com/richardbertozzo/type-coffee/infra/database"
 )
 
 func main() {
@@ -41,9 +43,21 @@ func main() {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Minute*2)
 	defer cancelFunc()
 
-	// todo: got the input characteristic from a flag
+	var inputCarac []string
+	prompt := &survey.MultiSelect{
+		Message:  "Select Up to 3 Characteristics",
+		Options:  coffee.ListAllCharacteristic(),
+		PageSize: 7,
+	}
+
+	err = survey.AskOne(prompt, &inputCarac, nil)
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return
+	}
+
 	bestCoffees, err := uc.GetBestCoffees(ctx, coffee.Filter{
-		Characteristics: []coffee.Characteristic{coffee.Flavor, coffee.Body},
+		Characteristics: coffee.ConvertToCharacteristic(inputCarac),
 	})
 	if err != nil {
 		log.Fatalf("error in get best coffee: %v", err)
