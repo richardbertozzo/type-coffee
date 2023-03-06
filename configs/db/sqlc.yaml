@@ -5,6 +5,6 @@ sql:
     engine: postgresql
     gen:
       go:
-        package: repository
-        out: '../../coffee/repository'
+        package: service
+        out: '../../coffee/service'
         sql_package: pgx/v4
