@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/richardbertozzo/type-coffee/coffee/service"
+	"github.com/richardbertozzo/type-coffee/coffee/provider"
 	"github.com/richardbertozzo/type-coffee/infra/database"
 )
 
@@ -29,7 +29,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	queries := service.New(dbPool)
+	queries := provider.New(dbPool)
 
 	err = run(queries, *flagFile)
 	if err != nil {
@@ -37,7 +37,7 @@ func main() {
 	}
 }
 
-func run(queries *service.Queries, filePath string) error {
+func run(queries *provider.Queries, filePath string) error {
 	f, csvReader, err := CSVReader(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -64,7 +64,7 @@ func run(queries *service.Queries, filePath string) error {
 		}
 
 		coffee := createCoffeeFromCSVRow(record)
-		id, err := queries.InsertCoffee(context.Background(), service.InsertCoffeeParams{
+		id, err := queries.InsertCoffee(context.Background(), provider.InsertCoffeeParams{
 			Specie:          coffee.Specie,
 			Owner:           coffee.Owner,
 			CountryOfOrigin: coffee.CountryOfOrigin,
@@ -93,8 +93,8 @@ func parseStrToFloat(strValue string) float32 {
 	return float32(f)
 }
 
-func createCoffeeFromCSVRow(row []string) service.Coffee {
-	return service.Coffee{
+func createCoffeeFromCSVRow(row []string) provider.Coffee {
+	return provider.Coffee{
 		Specie:          row[1],
 		Owner:           row[2],
 		CountryOfOrigin: row[3],

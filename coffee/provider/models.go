@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.16.0
 
-package service
+package provider
 
 import (
 	"database/sql"

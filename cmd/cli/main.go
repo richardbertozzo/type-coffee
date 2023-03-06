@@ -10,7 +10,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 
 	"github.com/richardbertozzo/type-coffee/coffee"
-	"github.com/richardbertozzo/type-coffee/coffee/service"
+	"github.com/richardbertozzo/type-coffee/coffee/provider"
 	"github.com/richardbertozzo/type-coffee/coffee/usecase"
 	"github.com/richardbertozzo/type-coffee/infra/database"
 )
@@ -24,7 +24,7 @@ func main() {
 	if chatGPTKey == "" {
 		log.Fatal("CHAT_GPT_KEY ENV is required")
 	}
-	provider, err := service.NewChatGPTProvider(chatGPTKey)
+	provider, err := provider.NewChatGPTProvider(chatGPTKey)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,7 +36,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		dbService = service.NewDatabaseService(dbPool)
+		dbService = provider.NewDatabaseService(dbPool)
 	}
 
 	uc := usecase.New(provider, dbService)

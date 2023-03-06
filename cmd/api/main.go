@@ -12,7 +12,7 @@ import (
 
 	"github.com/richardbertozzo/type-coffee/coffee"
 	"github.com/richardbertozzo/type-coffee/coffee/handler"
-	"github.com/richardbertozzo/type-coffee/coffee/service"
+	"github.com/richardbertozzo/type-coffee/coffee/provider"
 	"github.com/richardbertozzo/type-coffee/coffee/usecase"
 	"github.com/richardbertozzo/type-coffee/infra/database"
 )
@@ -35,7 +35,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		dbService = service.NewDatabaseService(dbPool)
+		dbService = provider.NewDatabaseService(dbPool)
 	}
 
 	swagger, err := coffee.GetSwagger()
@@ -45,7 +45,7 @@ func main() {
 
 	swagger.Servers = nil
 
-	chatGPTService, err := service.NewChatGPTProvider(chatGptKey)
+	chatGPTService, err := provider.NewChatGPTProvider(chatGptKey)
 	if err != nil {
 		log.Fatal(err)
 	}
