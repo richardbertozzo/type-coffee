@@ -1,0 +1,10 @@
+version: '2'
+sql:
+  - schema: '.'
+    queries: './queries'
+    engine: postgresql
+    gen:
+      go:
+        package: service
+        out: '../../coffee/service'
+        sql_package: pgx/v4

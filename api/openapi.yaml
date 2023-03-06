@@ -1,13 +1,13 @@
 openapi: "3.0.0"
 info:
   version: 1.0.0
-  title: Best Type of coffee API
+  title: Best Type of Coffee API
   license:
     name: MIT
 servers:
   - url: http://localhost:3000
 paths:
-  /v1/coffee:
+  /v1/best-coffees:
     get:
       summary: Get the right type of coffee
       operationId: getBestTypeCoffee
@@ -76,6 +76,7 @@ components:
         - aroma
         - body
         - flavor
+        - sweetness
 
     Error:
       type: object

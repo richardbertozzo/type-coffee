@@ -1,17 +1,18 @@
 PROJECTNAME := $(shell basename "$(PWD)")
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
+DATABASE := typecoffee
 
 ## lint: Run the lint
 lint:
 	go vet ${PKG_LIST}
 
-## build: Build the server binary to execute
+## build: Build the api binary to execute
 build:
-	go build -o ${PROJECTNAME} ./cmd/server
+	go build -o ${PROJECTNAME} ./cmd/api
 
-## run: Run the server
+## run: Run the api
 run:
-	go run ./cmd/server
+	go run ./cmd/api
 
 ## test: Run the test of project
 test:
@@ -30,6 +31,24 @@ gen-go-openapi-code:
 	mkdir -p coffee/handler
 	oapi-codegen --config configs/openapi/types.yml api/openapi.yaml
 	oapi-codegen --config configs/openapi/server.yml api/openapi.yaml
+
+.PHONY: gen-go-sql-code
+gen-go-sql-code:
+	sqlc generate --file configs/db/sqlc.yaml
+
+.PHONY: pg-up
+pg-up:
+	docker run \
+		--name postgres \
+		-p 5432:5432 \
+		-e POSTGRES_USER=root \
+		-e POSTGRES_PASSWORD=secret \
+		-e POSTGRES_DB=${DATABASE} \
+		-d --rm postgres:14
+
+.PHONY: pg-down
+pg-down:
+	docker stop postgres
 
 .PHONY: help
 all: help
