@@ -34,3 +34,60 @@ func (q *Queries) GetCoffeeById(ctx context.Context, id uuid.UUID) (Coffee, erro
 	)
 	return i, err
 }
+
+const insertCoffee = `-- name: InsertCoffee :one
+INSERT INTO coffee (
+    specie,
+    owner,
+    country_of_origin,
+    company,
+    aroma,
+    flavor,
+    aftertaste,
+    acidity,
+    body,
+    sweetness
+) VALUES (
+    $1::varchar,
+    $2::varchar,
+    $3::varchar,
+    $4::varchar,
+    $5,
+    $6,
+    $7,
+    $8,
+    $9,
+    $10
+) RETURNING id
+`
+
+type InsertCoffeeParams struct {
+	Specie          string
+	Owner           string
+	CountryOfOrigin string
+	Company         string
+	Aroma           float32
+	Flavor          float32
+	Aftertaste      float32
+	Acidity         float32
+	Body            float32
+	Sweetness       float32
+}
+
+func (q *Queries) InsertCoffee(ctx context.Context, arg InsertCoffeeParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, insertCoffee,
+		arg.Specie,
+		arg.Owner,
+		arg.CountryOfOrigin,
+		arg.Company,
+		arg.Aroma,
+		arg.Flavor,
+		arg.Aftertaste,
+		arg.Acidity,
+		arg.Body,
+		arg.Sweetness,
+	)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}

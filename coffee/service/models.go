@@ -8,7 +8,6 @@ import (
 	"database/sql"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgtype"
 )
 
 type Coffee struct {
@@ -17,10 +16,10 @@ type Coffee struct {
 	Owner           string
 	CountryOfOrigin string
 	Company         sql.NullString
-	Aroma           pgtype.Numeric
-	Flavor          pgtype.Numeric
-	Aftertaste      pgtype.Numeric
-	Acidity         pgtype.Numeric
-	Body            pgtype.Numeric
-	Sweetness       pgtype.Numeric
+	Aroma           float32
+	Flavor          float32
+	Aftertaste      float32
+	Acidity         float32
+	Body            float32
+	Sweetness       float32
 }
