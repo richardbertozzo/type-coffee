@@ -5,10 +5,10 @@ CREATE TABLE coffee
     owner             VARCHAR(100) NOT NULL,
     country_of_origin VARCHAR(100) NOT NULL,
     company           VARCHAR(100),
-    aroma             NUMERIC(2, 2) NOT NULL,
-    flavor            NUMERIC(2, 2) NOT NULL,
-    aftertaste        NUMERIC(2, 2) NOT NULL,
-    acidity           NUMERIC(2, 2) NOT NULL,
-    body              NUMERIC(2, 2) NOT NULL,
-    sweetness         NUMERIC(2, 2) NOT NULL
+    aroma             float4 NOT NULL,
+    flavor            float4 NOT NULL,
+    aftertaste        float4 NOT NULL,
+    acidity           float4 NOT NULL,
+    body              float4 NOT NULL,
+    sweetness         float4 NOT NULL
 );
