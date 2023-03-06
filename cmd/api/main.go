@@ -27,7 +27,7 @@ func main() {
 		log.Fatal("CHAT_GPT_KEY ENV is required")
 	}
 
-	var dbService coffee.Service
+	var db coffee.Service
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL != "" {
 		log.Println("database mode service enabled")
@@ -35,7 +35,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		dbService = provider.NewDatabase(dbPool)
+		db = provider.NewDatabase(dbPool)
 	}
 
 	swagger, err := coffee.GetSwagger()
@@ -45,12 +45,12 @@ func main() {
 
 	swagger.Servers = nil
 
-	chatGPTService, err := provider.NewChatGPTProvider(chatGptKey)
+	chatGPT, err := provider.NewChatGPTProvider(chatGptKey)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	uc := usecase.New(chatGPTService, dbService)
+	uc := usecase.New(chatGPT, db)
 	h := handler.NewHandler(uc)
 
 	r := chi.NewRouter()
