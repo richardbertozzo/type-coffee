@@ -24,22 +24,22 @@ func main() {
 	if chatGPTKey == "" {
 		log.Fatal("CHAT_GPT_KEY ENV is required")
 	}
-	provider, err := provider.NewChatGPTProvider(chatGPTKey)
+	chatGPT, err := provider.NewChatGPTProvider(chatGPTKey)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var dbService coffee.Service
+	var db coffee.Service
 	if dbURL != "" {
 		log.Println("database mode service enabled")
 		dbPool, err := database.NewConnection(context.Background(), dbURL)
 		if err != nil {
 			log.Fatal(err)
 		}
-		dbService = provider.NewDatabaseService(dbPool)
+		db = provider.NewDatabase(dbPool)
 	}
 
-	uc := usecase.New(provider, dbService)
+	uc := usecase.New(chatGPT, db)
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Minute*2)
 	defer cancelFunc()
 

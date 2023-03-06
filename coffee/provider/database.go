@@ -14,7 +14,7 @@ type databaseService struct {
 	queries *Queries
 }
 
-func NewDatabaseService(querier pgxtype.Querier) coffee.Service {
+func NewDatabase(querier pgxtype.Querier) coffee.Service {
 	return &databaseService{
 		queries: New(querier),
 	}

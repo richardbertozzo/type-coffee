@@ -35,7 +35,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		dbService = provider.NewDatabaseService(dbPool)
+		dbService = provider.NewDatabase(dbPool)
 	}
 
 	swagger, err := coffee.GetSwagger()
