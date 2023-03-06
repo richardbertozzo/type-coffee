@@ -5,7 +5,8 @@
 Get your right type of coffee ☕
 
 Go application that provides information on the best type of coffee based on user input characteristics. 
-It uses two data sources: the ChatGPT API and a database populated by ETL from a dataset, this dataset was gathered from [Kaggle](https://www.kaggle.com/datasets/volpatto/coffee-quality-database-from-cqi) (kudos for the author), see there for further details.
+It uses two data sources: the **ChatGPT API** and a **database** populated by ETL from a dataset, not required if you only want the ChatGPT data source for the best type coffee options. 
+This dataset was gathered from [Kaggle](https://www.kaggle.com/datasets/volpatto/coffee-quality-database-from-cqi) (kudos for the author), see there for further details.
 
 ## Usage
 
@@ -13,11 +14,28 @@ To run the application, you need to have:
 - Go installed
 - Chat GPT API key, you can create one [here](https://platform.openai.com/account/api-keys)
 - Postgres URL (_optimal_)
-  - explain
+  - You can run a local docker instance by running the command `$ make pg-up` or pointing for a Cloud instance
 
-The application has two command entry points:
+The application has tree command entry points:
+
+### ETL
+
+This entrypoint has the responsibility to get the [Coffee CSV dataset](./data), convert the rows and 
+then insert them into the Postgres database.
+
+It will create and populate the second data source to retrieve the best type of coffee for you, 
+which you can get using the other 2 commands, **API** and **CLI**. 
+
+This is optimal if only want the ChatGPT, so skip it. 
+
+You can run the ETL by the command:
+
+```shell
+go run cmd/etl/main.go --DATABASE_URL <database_url>
+```
 
 ### API
+
 To start the HTTP API, run the following command:
 
 ```shell
@@ -36,7 +54,7 @@ To start the command line interface, run the following command:
 go run cmd/cli/main.go --CHAT_GPT_KEY <your_chat_gpt_key> --DATABASE_URL <database_url>
 ```
 
-This will run the CLI interface, which will output the best coffees for you.
+This will run the CLI interface, which will output the best coffees for you from the selected characteristics.
 
 ## Data Sources
 
