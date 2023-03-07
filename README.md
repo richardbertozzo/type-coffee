@@ -1,6 +1,10 @@
-# The Best Type of Coffee
-
-![logo](./data/logo.png)
+<h1 align="center">
+  <a href="https://github.com/richardbertozzo/type-coffee" title="type coffee doc">
+    <img alt="logo" src="https://github.com/richardbertozzo/type-coffee/blob/master/data/logo.png" width="200px" height="200px" />
+  </a>
+  <br />
+  The Best Type of Coffee
+</h1>
 
 
 [![ci](https://github.com/richardbertozzo/type-coffee/actions/workflows/ci.yml/badge.svg)](https://github.com/richardbertozzo/type-coffee/actions/workflows/ci.yml) [![Go Report Card](https://goreportcard.com/badge/github.com/richardbertozzo/type-coffee)](https://goreportcard.com/report/github.com/richardbertozzo/type-coffee) [![codecov](https://codecov.io/gh/richardbertozzo/type-coffee/branch/master/graph/badge.svg?token=G667W1L2O5)](https://codecov.io/gh/richardbertozzo/type-coffee)
