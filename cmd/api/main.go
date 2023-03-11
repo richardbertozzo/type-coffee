@@ -7,6 +7,7 @@ import (
 	"os"
 
 	openapiMiddleware "github.com/deepmap/oapi-codegen/pkg/chi-middleware"
+	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 
@@ -55,7 +56,17 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-	r.Use(openapiMiddleware.OapiRequestValidator(swagger))
+	r.Use(openapiMiddleware.OapiRequestValidatorWithOptions(
+		swagger,
+		&openapiMiddleware.Options{
+			Options: openapi3filter.Options{
+				ExcludeRequestBody:    true,
+				ExcludeResponseBody:   true,
+				IncludeResponseStatus: true,
+				MultiError:            false,
+			},
+		},
+	))
 
 	coffee.HandlerFromMux(h, r)
 
