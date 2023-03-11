@@ -43,7 +43,7 @@ go run cmd/etl/main.go --DATABASE_URL <database_url>
 
 ### API
 
-To start the HTTP API, run the following command:
+Set up your local `.env` file using the file `.env.example`. Then you can start the HTTP API, run the following command:
 
 ```shell
 make run
