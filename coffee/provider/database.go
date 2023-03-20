@@ -5,18 +5,16 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jackc/pgtype/pgxtype"
-
 	"github.com/richardbertozzo/type-coffee/coffee"
 )
 
 type databaseService struct {
-	queries *Queries
+	db DBTX
 }
 
-func NewDatabase(querier pgxtype.Querier) coffee.Service {
+func NewDatabase(db DBTX) coffee.Service {
 	return &databaseService{
-		queries: New(querier),
+		db: db,
 	}
 }
 
@@ -32,7 +30,7 @@ func (d *databaseService) GetCoffeeOptionsByCharacteristics(ctx context.Context,
 		ORDER BY $1
 		LIMIT $2
 	`
-	rows, err := d.queries.db.Query(ctx, query, orderBy, filter.Limit)
+	rows, err := d.db.Query(ctx, query, orderBy, filter.Limit)
 	if err != nil {
 		return nil, err
 	}
