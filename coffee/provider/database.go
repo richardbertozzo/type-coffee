@@ -78,6 +78,16 @@ func getSort(sort bool) string {
 }
 
 func buildMessageCoffee(coffee Coffee) string {
-	// TODO: improve this message
-	return fmt.Sprintf("you might taste a coffee from %s - specie %s and from the owner %s", coffee.CountryOfOrigin, coffee.Specie, coffee.Owner)
+	return fmt.Sprintf(`you might taste a coffee from %s - specie %s and from the owner %s. 
+		Characteristics presented in this coffee: acidity %v, aftertaste %v, aroma %v, flavor %v, body %v, sweetness %v`,
+		coffee.CountryOfOrigin,
+		coffee.Specie,
+		coffee.Owner,
+		coffee.Acidity,
+		coffee.Aftertaste,
+		coffee.Aroma,
+		coffee.Flavor,
+		coffee.Body,
+		coffee.Sweetness,
+	)
 }
