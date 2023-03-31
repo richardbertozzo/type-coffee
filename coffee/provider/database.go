@@ -5,18 +5,16 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jackc/pgtype/pgxtype"
-
 	"github.com/richardbertozzo/type-coffee/coffee"
 )
 
 type databaseService struct {
-	queries *Queries
+	db DBTX
 }
 
-func NewDatabase(querier pgxtype.Querier) coffee.Service {
+func NewDatabase(db DBTX) coffee.Service {
 	return &databaseService{
-		queries: New(querier),
+		db: db,
 	}
 }
 
@@ -32,7 +30,7 @@ func (d *databaseService) GetCoffeeOptionsByCharacteristics(ctx context.Context,
 		ORDER BY $1
 		LIMIT $2
 	`
-	rows, err := d.queries.db.Query(ctx, query, orderBy, filter.Limit)
+	rows, err := d.db.Query(ctx, query, orderBy, filter.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +78,16 @@ func getSort(sort bool) string {
 }
 
 func buildMessageCoffee(coffee Coffee) string {
-	// TODO: improve this message
-	return fmt.Sprintf("you might taste a coffee from %s - specie %s and from the owner %s", coffee.CountryOfOrigin, coffee.Specie, coffee.Owner)
+	return fmt.Sprintf(`you might taste a coffee from %s - specie %s and from the owner %s. 
+		Characteristics presented in this coffee: acidity %v, aftertaste %v, aroma %v, flavor %v, body %v, sweetness %v`,
+		coffee.CountryOfOrigin,
+		coffee.Specie,
+		coffee.Owner,
+		coffee.Acidity,
+		coffee.Aftertaste,
+		coffee.Aroma,
+		coffee.Flavor,
+		coffee.Body,
+		coffee.Sweetness,
+	)
 }
