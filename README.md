@@ -20,7 +20,7 @@ This dataset was gathered from [Kaggle](https://www.kaggle.com/datasets/volpatto
 To run the application, you need to have:
 - Go installed
 - Chat GPT API key, you can create one [here](https://platform.openai.com/account/api-keys)
-- Postgres URL (_optimal_)
+- Postgres URL (_optional_)
   - You can run a local docker instance by running the command `$ make pg-up` or pointing for a Cloud instance
 
 The application has tree command entry points:
