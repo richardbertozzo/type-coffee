@@ -4,12 +4,12 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 
 	openapiMiddleware "github.com/deepmap/oapi-codegen/pkg/chi-middleware"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
-	"github.com/spf13/viper"
 
 	"github.com/richardbertozzo/type-coffee/coffee"
 	"github.com/richardbertozzo/type-coffee/coffee/handler"
@@ -24,36 +24,30 @@ type config struct {
 	ChatGPTKey string
 }
 
-func loadConfig(filePath string) config {
+func loadConfig() config {
 	portKey := "PORT"
 	dbKey := "DATABASE_URL"
 	chatGPTKey := "CHAT_GPT_KEY"
 
-	viper.SetConfigFile(filePath)
-	viper.SetDefault(portKey, ":3000")
-	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			// Config file not found; ignore error if desired
-			log.Fatalf("config not found: %s", err)
-		} else {
-			log.Fatalf("error in read config: %s", err)
-		}
+	port := os.Getenv(portKey)
+	if port == "" {
+		port = ":3000"
 	}
 
-	chatGptKey := viper.GetString(chatGPTKey)
-	if chatGptKey == "" {
+	chatGptValue := os.Getenv(chatGPTKey)
+	if chatGptValue == "" {
 		log.Fatal("CHAT_GPT_KEY ENV is required")
 	}
 
 	return config{
-		Port:       viper.GetString(portKey),
-		DBUrl:      viper.GetString(dbKey),
-		ChatGPTKey: viper.GetString(chatGPTKey),
+		Port:       port,
+		DBUrl:      os.Getenv(dbKey),
+		ChatGPTKey: chatGptValue,
 	}
 }
 
 func main() {
-	cfg := loadConfig(".env")
+	cfg := loadConfig()
 
 	var db coffee.Service
 	if cfg.DBUrl != "" {
