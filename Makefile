@@ -14,7 +14,7 @@ docker-build:
 	docker build -t type-coffee-api .
 
 docker-run:
-	docker run --env-file=.env type-coffee-api
+	docker run --env-file=.env -p 3000:3000 type-coffee-api
 
 ## run: Run the api
 run:

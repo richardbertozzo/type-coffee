@@ -34,5 +34,9 @@ func NewConnection(
 		return nil, fmt.Errorf("unable to connect to database: %w", err)
 	}
 
+	if err = pool.Ping(ctx); err != nil {
+		return nil, fmt.Errorf("unable to ping Postgres: %w", err)
+	}
+
 	return pool, nil
 }
