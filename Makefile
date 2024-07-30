@@ -10,6 +10,12 @@ lint:
 build:
 	go build -o ${PROJECTNAME} ./cmd/api
 
+docker-build:
+	docker build -t type-coffee-api .
+
+docker-run:
+	docker run --env-file=.env type-coffee-api
+
 ## run: Run the api
 run:
 	go run ./cmd/api
