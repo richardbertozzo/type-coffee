@@ -25,10 +25,16 @@ func main() {
 		log.Fatal("DATABASE_URL ENV is required")
 	}
 
-	dbPool, err := database.NewConnection(context.Background(), *dbURL)
+	ctx := context.Background()
+	dbPool, err := database.NewConnection(ctx, *dbURL)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	if err = dbPool.Ping(ctx); err != nil {
+		log.Fatal(err)
+	}
+
 	queries := provider.New(dbPool)
 
 	err = run(queries, *flagFile)
