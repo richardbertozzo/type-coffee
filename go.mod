@@ -7,6 +7,7 @@ require (
 	github.com/getkin/kin-openapi v0.124.0
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/render v1.0.3
+	github.com/google/uuid v1.5.0
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/oapi-codegen/nethttp-middleware v1.0.2
@@ -20,7 +21,6 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/go-openapi/jsonpointer v0.20.2 // indirect
 	github.com/go-openapi/swag v0.22.8 // indirect
-	github.com/google/uuid v1.5.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/invopop/yaml v0.2.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
