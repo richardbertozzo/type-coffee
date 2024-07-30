@@ -31,6 +31,8 @@ RUN go build -o app ./cmd/api
 # FINAL STAGE: the running container.
 FROM alpine:3.17.3 AS final
 
+ENV IS_DOCKER=true
+
 # Import the Certificate-Authority certificates for enabling HTTPS.
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 # Import the compiled executable from the first stage.

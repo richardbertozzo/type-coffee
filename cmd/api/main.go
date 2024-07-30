@@ -10,6 +10,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 
 	"github.com/richardbertozzo/type-coffee/coffee"
 	"github.com/richardbertozzo/type-coffee/coffee/handler"
@@ -18,6 +19,8 @@ import (
 	"github.com/richardbertozzo/type-coffee/infra/database"
 )
 
+const defaultEnvFilePath = ".env"
+
 type config struct {
 	Port       string
 	DBUrl      string
@@ -25,9 +28,16 @@ type config struct {
 }
 
 func loadConfig() config {
+	isDocker := "IS_DOCKER"
 	portKey := "PORT"
 	dbKey := "DATABASE_URL"
 	chatGPTKey := "CHAT_GPT_KEY"
+
+	isDockerEnv := os.Getenv(isDocker)
+	err := godotenv.Load(defaultEnvFilePath)
+	if err != nil && isDockerEnv == "" {
+		log.Fatal("Error loading .env file")
+	}
 
 	port := os.Getenv(portKey)
 	if port == "" {
