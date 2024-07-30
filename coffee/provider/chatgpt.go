@@ -56,6 +56,7 @@ func getPrompt(carats []coffee.Characteristic) string {
 	return fmt.Sprintf(promptTemplate, finalCharacteristics)
 }
 
+// todo: update to new openai api version - not returning prompt payload
 func (c *openAIClient) GetCoffeeOptionsByCharacteristics(ctx context.Context, filter coffee.Filter) ([]coffee.OptionProvider, error) {
 	prompt := getPrompt(filter.Characteristics)
 	fmt.Println(prompt)
