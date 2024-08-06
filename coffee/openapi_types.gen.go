@@ -16,8 +16,9 @@ const (
 // BestCoffees defines model for BestCoffees.
 type BestCoffees struct {
 	Characteristics []Characteristic `json:"characteristics"`
-	ChatGpt         []Option         `json:"chat_gpt"`
 	Database        *[]Option        `json:"database,omitempty"`
+	Disclaimer      string           `json:"disclaimer"`
+	Gemini          *[]Option        `json:"gemini,omitempty"`
 }
 
 // Characteristic defines model for Characteristic.

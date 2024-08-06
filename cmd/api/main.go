@@ -40,12 +40,12 @@ func main() {
 
 	swagger.Servers = nil
 
-	chatGPT, err := provider.NewChatGPTProvider(cfg.ChatGPTKey)
+	geminiCli, err := provider.NewGeminiClient(cfg.GeminiAPIKey)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	uc := usecase.New(chatGPT, db)
+	uc := usecase.New(geminiCli, db)
 	h := handler.NewHandler(uc)
 
 	r := chi.NewRouter()

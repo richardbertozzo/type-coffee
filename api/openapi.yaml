@@ -42,13 +42,15 @@ components:
       type: object
       required:
         - characteristics
-        - chat_gpt
+        - disclaimer
       properties:
         characteristics:
           type: array
           items:
             $ref: "#/components/schemas/Characteristic"
-        chat_gpt:
+        disclaimer:
+          type: string
+        gemini:
           type: array
           items:
             $ref: "#/components/schemas/Option"
@@ -56,7 +58,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Option"
-
 
     Option:
       type: object

@@ -10,9 +10,9 @@ import (
 const defaultEnvFilePath = ".env"
 
 type Config struct {
-	Port       string
-	ChatGPTKey string
-	DBCfg      DBConfig
+	Port         string
+	GeminiAPIKey string
+	DBCfg        DBConfig
 }
 
 type DBConfig struct {
@@ -33,7 +33,7 @@ func getEnvPath(path string) string {
 func LoadConfig() Config {
 	pathEnv := os.Getenv("CONFIG_PATH")
 	portKey := "PORT"
-	chatGPTKey := "CHAT_GPT_KEY"
+	geminiAPIKey := "GEMINI_API_KEY"
 	dbUrlKey := "DB_URL"
 	dbDatabaseKey := "DB_DATABASE"
 	dbUsernameKey := "DB_USERNAME"
@@ -49,14 +49,14 @@ func LoadConfig() Config {
 		port = ":3000"
 	}
 
-	chatGptValue := os.Getenv(chatGPTKey)
-	if chatGptValue == "" {
-		log.Fatal("CHAT_GPT_KEY ENV is required")
+	geminiAPIValue := os.Getenv(geminiAPIKey)
+	if geminiAPIValue == "" {
+		log.Fatal("GEMINI_API_KEY ENV is required")
 	}
 
 	return Config{
-		Port:       port,
-		ChatGPTKey: chatGptValue,
+		Port:         port,
+		GeminiAPIKey: geminiAPIValue,
 
 		DBCfg: DBConfig{
 			DBUrl:      os.Getenv(dbUrlKey),

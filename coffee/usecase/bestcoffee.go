@@ -9,18 +9,31 @@ import (
 	"github.com/richardbertozzo/type-coffee/coffee"
 )
 
+const disclaimerBestCoffeeMsg = `There's no "best" coffee, as it's entirely subjective!  What someone finds delicious, another might find awful. 
+
+Consider your preferences and explore different coffee types
+
+Here's how to find your perfect flavor:
+
+* **Start with a sample pack:** Many online retailers offer small bags of various coffees.
+* **Visit a local coffee shop:**  They often have a wide selection and can give recommendations.
+* **Experiment:**  Don't be afraid to try different roasts and origins until you find what you love.
+
+Remember, the "best" is the one YOU enjoy the most! Happy coffee tasting! 
+`
+
 type useCase struct {
-	chatGPTProvider  coffee.Service
-	dbService        coffee.Service
-	dbServiceEnabled bool
+	geminiAPIProvider coffee.Service
+	dbService         coffee.Service
+	dbServiceEnabled  bool
 }
 
 // New returns a new coffee use case
-func New(chatGPTProvider, dbService coffee.Service) *useCase {
+func New(geminiProvider, dbService coffee.Service) *useCase {
 	return &useCase{
-		chatGPTProvider:  chatGPTProvider,
-		dbService:        dbService,
-		dbServiceEnabled: dbService != nil,
+		geminiAPIProvider: geminiProvider,
+		dbService:         dbService,
+		dbServiceEnabled:  dbService != nil,
 	}
 }
 
@@ -36,15 +49,15 @@ func (u useCase) GetBestCoffees(ctx context.Context, filter coffee.Filter) (*cof
 
 	g, ctx := errgroup.WithContext(ctx)
 
-	var chatGptOpts []coffee.Option
+	var geminiOptions []coffee.Option
 	g.Go(func() error {
-		opts, err := u.chatGPTProvider.GetCoffeeOptionsByCharacteristics(ctx, filter)
+		opts, err := u.geminiAPIProvider.GetCoffeeOptionsByCharacteristics(ctx, filter)
 		if err != nil {
 			return err
 		}
 
 		for _, opt := range opts {
-			chatGptOpts = append(chatGptOpts, coffee.Option{
+			geminiOptions = append(geminiOptions, coffee.Option{
 				Message: opt.Message,
 			})
 		}
@@ -77,8 +90,9 @@ func (u useCase) GetBestCoffees(ctx context.Context, filter coffee.Filter) (*cof
 
 	return &coffee.BestCoffees{
 		Characteristics: filter.Characteristics,
-		ChatGpt:         chatGptOpts,
+		Gemini:          &geminiOptions,
 		Database:        &dbOpts,
+		Disclaimer:      disclaimerBestCoffeeMsg,
 	}, nil
 }
 
