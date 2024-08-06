@@ -1,2 +1,0 @@
-- [ ] use a migration tool like atlas go to manage and apply sql changes
-- [ ] configure and deploy to the k8s cluster
