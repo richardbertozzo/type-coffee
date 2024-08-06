@@ -52,6 +52,7 @@ func (c *GeminiClient) GetCoffeeOptionsByCharacteristics(ctx context.Context, fi
 	if len(resp.Candidates) > 0 {
 		opts := make([]coffee.OptionProvider, len(resp.Candidates[0].Content.Parts))
 		for i, part := range resp.Candidates[0].Content.Parts {
+			// todo: improve output message and format
 			opts[i] = coffee.OptionProvider{
 				Message: fmt.Sprintf("%v", part),
 			}
