@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: type-coffee-api
+  labels:
+    app: type-coffee-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: type-coffee-api
+  template:
+    metadata:
+      labels:
+        app: type-coffee-api
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "type-coffee-api"
+        vault.hashicorp.com/agent-inject-status: "update"
+        vault.hashicorp.com/agent-inject-secret-type-coffee.env: "secret/type-coffee-api/env"
+        vault.hashicorp.com/agent-inject-template-type-coffee.env: |
+          {{ with secret "secret/data/type-coffee-api/env" -}}
+          export DB_USERNAME="{{ .Data.data.DB_USERNAME }}"
+          export DB_PASSWORD="{{ .Data.data.DB_PASSWORD }}"
+          export DB_DATABASE="{{ .Data.data.DB_DATABASE }}"
+          export CHAT_GPT_KEY="{{ .Data.data.CHAT_GPT_KEY }}"
+          {{- end }}
+    spec:
+      serviceAccountName: type-coffee-api
+      containers:
+        - name: type-coffee-api
+          image: ghcr.io/richardbertozzo/type-coffee-api:latest
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_URL
+              value: "silly.db.elephantsql.com"
+            - name: CONFIG_PATH
+              value: /vault/secrets/type-coffee.env
