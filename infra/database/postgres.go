@@ -40,3 +40,7 @@ func NewConnection(
 
 	return pool, nil
 }
+
+func BuildURL(url, dbName, user, pwd string) string {
+	return fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", user, pwd, url, dbName)
+}

@@ -23,15 +23,25 @@ const defaultEnvFilePath = ".env"
 
 type config struct {
 	Port       string
-	DBUrl      string
 	ChatGPTKey string
+	DBCfg      dbConfig
+}
+
+type dbConfig struct {
+	DBUrl      string
+	DBDatabase string
+	DBUser     string
+	DBPassword string
 }
 
 func loadConfig() config {
 	isDocker := "IS_DOCKER"
 	portKey := "PORT"
-	dbKey := "DATABASE_URL"
 	chatGPTKey := "CHAT_GPT_KEY"
+	dbUrlKey := "DB_URL"
+	dbDatabaseKey := "DB_DATABASE"
+	dbUsernameKey := "DB_USERNAME"
+	dbPwdKey := "DB_PASSWORD"
 
 	isDockerEnv := os.Getenv(isDocker)
 	err := godotenv.Load(defaultEnvFilePath)
@@ -51,8 +61,14 @@ func loadConfig() config {
 
 	return config{
 		Port:       port,
-		DBUrl:      os.Getenv(dbKey),
 		ChatGPTKey: chatGptValue,
+
+		DBCfg: dbConfig{
+			DBUrl:      os.Getenv(dbUrlKey),
+			DBDatabase: os.Getenv(dbDatabaseKey),
+			DBUser:     os.Getenv(dbUsernameKey),
+			DBPassword: os.Getenv(dbPwdKey),
+		},
 	}
 }
 
@@ -60,9 +76,11 @@ func main() {
 	cfg := loadConfig()
 
 	var db coffee.Service
-	if cfg.DBUrl != "" {
+	if cfg.DBCfg.DBUrl != "" {
 		log.Println("database mode service enabled")
-		dbPool, err := database.NewConnection(context.Background(), cfg.DBUrl)
+		dbURL := database.BuildURL(cfg.DBCfg.DBUrl, cfg.DBCfg.DBDatabase, cfg.DBCfg.DBDatabase, cfg.DBCfg.DBPassword)
+
+		dbPool, err := database.NewConnection(context.Background(), dbURL)
 		if err != nil {
 			log.Fatal(err)
 		}
