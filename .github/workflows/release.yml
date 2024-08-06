@@ -17,3 +17,5 @@ jobs:
           image: type-coffee-api
           registry: ghcr.io
           addLatest: true
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
