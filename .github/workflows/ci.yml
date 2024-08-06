@@ -47,4 +47,19 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.out 
+          file: ./coverage.out
+
+  push-docker-image:
+    name: push docker image
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: push to github registry
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: ghcr.io/richardbertozzo/type-coffee-api
+          registry: ghcr.io
+          addLatest: true
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
