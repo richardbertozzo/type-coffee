@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"encoding/csv"
 	"flag"
 	"io"
@@ -10,6 +9,9 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/richardbertozzo/type-coffee/coffee/provider"
 	"github.com/richardbertozzo/type-coffee/infra/database"
@@ -82,7 +84,15 @@ func run(queries *provider.Queries, filePath string) error {
 			Body:            coffee.Body,
 			Sweetness:       coffee.Sweetness,
 		})
-		log.Printf("coffee inserted, id: %s - specie %s", id.String(), coffee.Specie)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		u, err := uuid.FromBytes(id.Bytes[0:16])
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("coffee inserted, id: %s - specie %s", u.String(), coffee.Specie)
 		recordsInserted++
 	}
 
@@ -104,7 +114,7 @@ func createCoffeeFromCSVRow(row []string) provider.Coffee {
 		Specie:          row[1],
 		Owner:           row[2],
 		CountryOfOrigin: row[3],
-		Company: sql.NullString{
+		Company: pgtype.Text{
 			String: row[5],
 			Valid:  true,
 		},
