@@ -34,6 +34,7 @@ func (h *handlerHttp) GetBestTypeCoffee(w http.ResponseWriter, r *http.Request, 
 	render.JSON(w, r, coffee.BestCoffees{
 		Characteristics: bestCoffees.Characteristics,
 		Database:        bestCoffees.Database,
-		ChatGpt:         bestCoffees.ChatGpt,
+		Gemini:          bestCoffees.Gemini,
+		Disclaimer:      bestCoffees.Disclaimer,
 	})
 }

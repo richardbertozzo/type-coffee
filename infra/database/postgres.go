@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // NewConnection creates a new pooled connection for pgx
@@ -29,10 +29,18 @@ func NewConnection(
 	cfg.MaxConnIdleTime = time.Minute * 5
 
 	// connect
-	pool, err := pgxpool.ConnectConfig(ctx, cfg)
+	pool, err := pgxpool.NewWithConfig(ctx, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to database: %w", err)
 	}
 
+	if err = pool.Ping(ctx); err != nil {
+		return nil, fmt.Errorf("unable to ping Postgres: %w", err)
+	}
+
 	return pool, nil
+}
+
+func BuildURL(url, dbName, user, pwd string) string {
+	return fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", user, pwd, url, dbName)
 }

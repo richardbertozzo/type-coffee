@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	openapiMiddleware "github.com/deepmap/oapi-codegen/pkg/chi-middleware"
 	"github.com/getkin/kin-openapi/openapi3filter"
-	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
-	"github.com/spf13/viper"
+	"github.com/go-chi/chi/v5/middleware"
+	openapiMiddleware "github.com/oapi-codegen/nethttp-middleware"
+	"github.com/richardbertozzo/type-coffee/internal/config"
 
 	"github.com/richardbertozzo/type-coffee/coffee"
 	"github.com/richardbertozzo/type-coffee/coffee/handler"
@@ -18,47 +18,15 @@ import (
 	"github.com/richardbertozzo/type-coffee/infra/database"
 )
 
-type config struct {
-	Port       string
-	DBUrl      string
-	ChatGPTKey string
-}
-
-func loadConfig(filePath string) config {
-	portKey := "PORT"
-	dbKey := "DATABASE_URL"
-	chatGPTKey := "CHAT_GPT_KEY"
-
-	viper.SetConfigFile(filePath)
-	viper.SetDefault(portKey, ":3000")
-	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			// Config file not found; ignore error if desired
-			log.Fatalf("config not found: %s", err)
-		} else {
-			log.Fatalf("error in read config: %s", err)
-		}
-	}
-
-	chatGptKey := viper.GetString(chatGPTKey)
-	if chatGptKey == "" {
-		log.Fatal("CHAT_GPT_KEY ENV is required")
-	}
-
-	return config{
-		Port:       viper.GetString(portKey),
-		DBUrl:      viper.GetString(dbKey),
-		ChatGPTKey: viper.GetString(chatGPTKey),
-	}
-}
-
 func main() {
-	cfg := loadConfig(".env")
+	cfg := config.LoadConfig()
 
 	var db coffee.Service
-	if cfg.DBUrl != "" {
+	if cfg.DBCfg.DBUrl != "" {
 		log.Println("database mode service enabled")
-		dbPool, err := database.NewConnection(context.Background(), cfg.DBUrl)
+		dbURL := database.BuildURL(cfg.DBCfg.DBUrl, cfg.DBCfg.DBDatabase, cfg.DBCfg.DBDatabase, cfg.DBCfg.DBPassword)
+
+		dbPool, err := database.NewConnection(context.Background(), dbURL)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -72,12 +40,12 @@ func main() {
 
 	swagger.Servers = nil
 
-	chatGPT, err := provider.NewChatGPTProvider(cfg.ChatGPTKey)
+	geminiCli, err := provider.NewGeminiClient(cfg.GeminiAPIKey)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	uc := usecase.New(chatGPT, db)
+	uc := usecase.New(geminiCli, db)
 	h := handler.NewHandler(uc)
 
 	r := chi.NewRouter()

@@ -1,0 +1,19 @@
+name: release
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  push-docker-image:
+    name: push docker image tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: push to github registry
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: type-coffee-api
+          registry: ghcr.io
+          addLatest: true

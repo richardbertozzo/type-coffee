@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: type-coffee-api-service
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 3030
+      targetPort: 3000
+  selector:
+    app: type-coffee-api

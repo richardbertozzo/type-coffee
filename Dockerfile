@@ -1,4 +1,4 @@
-ARG GO_VERSION=1.19.0
+ARG GO_VERSION=1.22.5
 
 # BUILD STAGE
 FROM golang:${GO_VERSION}-alpine as builder
@@ -26,16 +26,16 @@ RUN go mod download
 COPY . .
 
 # Build the executable to `/app`. Mark the build as statically linked.
-RUN go build -o server ./cmd/server
+RUN go build -o app ./cmd/api
 
 # FINAL STAGE: the running container.
-FROM scratch AS final
+FROM alpine:3.17.3 AS final
 
 # Import the Certificate-Authority certificates for enabling HTTPS.
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 # Import the compiled executable from the first stage.
-COPY --chown=0:0 --from=builder /app/server /server
+COPY --chown=0:0 --from=builder /app/app /app
 
 EXPOSE 3000
 
-ENTRYPOINT ["/server"]
+ENTRYPOINT ["/app"]

@@ -16,15 +16,15 @@ import (
 )
 
 func main() {
-	var chatGPTKey, dbURL string
-	flag.StringVar(&chatGPTKey, "CHAT_GPT_KEY", "", "Chat GPT API Key value")
+	var geminiAPIKey, dbURL string
+	flag.StringVar(&geminiAPIKey, "GEMINI_API_KEY", "", "Google Gemini API Key value")
 	flag.StringVar(&dbURL, "DATABASE_URL", "", "Database URL value")
 	flag.Parse()
 
-	if chatGPTKey == "" {
-		log.Fatal("CHAT_GPT_KEY ENV is required")
+	if geminiAPIKey == "" {
+		log.Fatal("GEMINI_API_KEY ENV is required")
 	}
-	chatGPT, err := provider.NewChatGPTProvider(chatGPTKey)
+	geminiCli, err := provider.NewGeminiClient(geminiAPIKey)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,7 +39,7 @@ func main() {
 		db = provider.NewDatabase(dbPool)
 	}
 
-	uc := usecase.New(chatGPT, db)
+	uc := usecase.New(geminiCli, db)
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Minute*2)
 	defer cancelFunc()
 
@@ -63,10 +63,13 @@ func main() {
 		log.Fatalf("error in get best coffee: %v", err)
 	}
 
-	// print options got from chat GPT openapi
-	for i, opt := range bestCoffees.ChatGpt {
-		fmt.Printf("Chat GPT %d option\n", i)
-		fmt.Println(opt.Message)
+	// print options got from Google Gemini
+	optsGemini := bestCoffees.Gemini
+	if optsGemini != nil {
+		for i, opt := range *optsGemini {
+			fmt.Printf("Google Gemini %d option\n", i)
+			fmt.Println(opt.Message)
+		}
 	}
 
 	// print options got from database data
