@@ -4,13 +4,12 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/joho/godotenv"
 	openapiMiddleware "github.com/oapi-codegen/nethttp-middleware"
+	"github.com/richardbertozzo/type-coffee/internal/config"
 
 	"github.com/richardbertozzo/type-coffee/coffee"
 	"github.com/richardbertozzo/type-coffee/coffee/handler"
@@ -19,61 +18,8 @@ import (
 	"github.com/richardbertozzo/type-coffee/infra/database"
 )
 
-const defaultEnvFilePath = ".env"
-
-type config struct {
-	Port       string
-	ChatGPTKey string
-	DBCfg      dbConfig
-}
-
-type dbConfig struct {
-	DBUrl      string
-	DBDatabase string
-	DBUser     string
-	DBPassword string
-}
-
-func loadConfig() config {
-	isDocker := "IS_DOCKER"
-	portKey := "PORT"
-	chatGPTKey := "CHAT_GPT_KEY"
-	dbUrlKey := "DB_URL"
-	dbDatabaseKey := "DB_DATABASE"
-	dbUsernameKey := "DB_USERNAME"
-	dbPwdKey := "DB_PASSWORD"
-
-	isDockerEnv := os.Getenv(isDocker)
-	err := godotenv.Load(defaultEnvFilePath)
-	if err != nil && isDockerEnv == "" {
-		log.Fatal("Error loading .env file")
-	}
-
-	port := os.Getenv(portKey)
-	if port == "" {
-		port = ":3000"
-	}
-
-	chatGptValue := os.Getenv(chatGPTKey)
-	if chatGptValue == "" {
-		log.Fatal("CHAT_GPT_KEY ENV is required")
-	}
-
-	return config{
-		Port:       port,
-		ChatGPTKey: chatGptValue,
-
-		DBCfg: dbConfig{
-			DBUrl:      os.Getenv(dbUrlKey),
-			DBDatabase: os.Getenv(dbDatabaseKey),
-			DBUser:     os.Getenv(dbUsernameKey),
-			DBPassword: os.Getenv(dbPwdKey),
-		},
-	}
-}
-
 func main() {
-	cfg := loadConfig()
+	cfg := config.LoadConfig()
 
 	var db coffee.Service
 	if cfg.DBCfg.DBUrl != "" {
