@@ -12,16 +12,16 @@
 Get your right type of coffee ☕
 
 Go application that provides information on the best type of coffee based on user input characteristics. 
-It uses two data sources: the **ChatGPT API** and a **database** populated by ETL from a dataset, not required if you only want the ChatGPT data source for the best type coffee options. 
+It uses two data sources: the **Google Gemini API** and a **database** populated by ETL from a dataset. 
 This dataset was gathered from [Kaggle](https://www.kaggle.com/datasets/volpatto/coffee-quality-database-from-cqi) (kudos for the author), see there for further details.
 
 ## Usage
 
 To run the application, you need to have:
 - Go installed
-- Chat GPT API key, you can create one [here](https://platform.openai.com/account/api-keys)
+- Google Gemini API key, you can create one [here](https://aistudio.google.com/app/apikey)
 - Postgres URL (_optional_)
-  - You can run a local docker instance by running the command `$ make pg-up` or pointing for a Cloud instance
+  - You can run a local docker instance by running the command `$ make pg-up` or pointing to any other instance, like a cloud instance
 
 The application has tree command entry points:
 
@@ -33,7 +33,7 @@ then insert them into the Postgres database.
 It will create and populate the second data source to retrieve the best type of coffee for you, 
 which you can get using the other 2 commands, **API** and **CLI**. 
 
-This is optimal if only want the ChatGPT, so skip it. 
+This is optimal if only want the Gemini API result, so skip it. 
 
 You can run the ETL by the command:
 
@@ -67,8 +67,8 @@ This will run the CLI interface, which will output the best coffees for you from
 
 It uses two data sources:
 
-### ChatGPT API
-The ChatGPT API is used to generate responses to user feedback. The application sends user feedback to the API and receives a response based on the user's input.
+### Gemini API
+The Gemini API is used to generate responses to user feedback. The application sends user feedback to the API and receives a response based on the user's input.
 
 ### Database
 The application also uses a database that is populated by ETL (Extract, Transform, Load) dataset data.

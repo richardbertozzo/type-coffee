@@ -23,13 +23,13 @@ spec:
           export DB_USERNAME="{{ .Data.data.DB_USERNAME }}"
           export DB_PASSWORD="{{ .Data.data.DB_PASSWORD }}"
           export DB_DATABASE="{{ .Data.data.DB_DATABASE }}"
-          export CHAT_GPT_KEY="{{ .Data.data.CHAT_GPT_KEY }}"
+          export GEMINI_API_KEY="{{ .Data.data.GEMINI_API_KEY }}"
           {{- end }}
     spec:
       serviceAccountName: type-coffee-api
       containers:
         - name: type-coffee-api
-          image: ghcr.io/richardbertozzo/type-coffee-api:latest
+          image: ghcr.io/richardbertozzo/type-coffee-api:v1.0.0
           imagePullPolicy: Always
           resources:
             limits:
