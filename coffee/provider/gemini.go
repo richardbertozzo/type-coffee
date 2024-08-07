@@ -31,7 +31,7 @@ func NewGeminiClient(apiKey string) (*GeminiClient, error) {
 	model.SetTopK(64)
 	model.SetTopP(0.95)
 	model.SetMaxOutputTokens(8192)
-	model.ResponseMIMEType = "application/json"
+	model.ResponseMIMEType = "text/plain"
 
 	return &GeminiClient{
 		model: model,
@@ -52,7 +52,6 @@ func (c *GeminiClient) GetCoffeeOptionsByCharacteristics(ctx context.Context, fi
 	if len(resp.Candidates) > 0 {
 		opts := make([]coffee.OptionProvider, len(resp.Candidates[0].Content.Parts))
 		for i, part := range resp.Candidates[0].Content.Parts {
-			// todo: improve output message and format
 			opts[i] = coffee.OptionProvider{
 				Message: fmt.Sprintf("%v", part),
 			}
@@ -65,7 +64,7 @@ func (c *GeminiClient) GetCoffeeOptionsByCharacteristics(ctx context.Context, fi
 }
 
 func getPrompt(carats []coffee.Characteristic) string {
-	promptTemplate := "recommend some good coffee options considering %s characteristics"
+	promptTemplate := "recommend some good coffee options considering %s characteristics. Describing the options in the sentence with name, flavor, roast and example"
 
 	var cs []string
 	for _, c := range carats {
