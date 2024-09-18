@@ -38,6 +38,9 @@ gen-go-openapi-code:
 	oapi-codegen --config configs/openapi/types.yml api/openapi.yaml
 	oapi-codegen --config configs/openapi/server.yml api/openapi.yaml
 
+gen-go-grpc-code:
+	protoc --go_out=coffee --go_opt=paths=source_relative --go-grpc_out=coffee --go-grpc_opt=paths=source_relative ./api/coffee.proto
+
 .PHONY: gen-go-sql-code
 gen-go-sql-code:
 	sqlc generate --file configs/db/sqlc.yaml

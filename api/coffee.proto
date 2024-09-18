@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package coffee;
+
+option go_package = "github.com/richardbertozzo/type-coffee/coffee";
+
+// CoffeeService defines the gRPC services for retrieving coffee data.
+service CoffeeService {
+  rpc GetBestTypeCoffee(GetBestTypeCoffeeRequest) returns (GetBestTypeCoffeeResponse);
+}
+
+message GetBestTypeCoffeeRequest {
+  repeated Characteristic characteristics = 1;
+}
+
+message GetBestTypeCoffeeResponse {
+  BestCoffee best_coffee = 1;
+}
+
+message BestCoffee {
+  repeated Option gemini = 1;
+  repeated Option database = 2;
+  string disclaimer = 3;
+}
+
+message Option {
+  string message = 1;
+  map<string, string> details = 2;
+}
+
+enum Characteristic {
+  ACIDITY = 0;
+  AFTERTASTE = 1;
+  AROMA = 2;
+  BODY = 3;
+  FLAVOR = 4;
+  SWEETNESS = 5;
+}
+
+message Error {
+  int32 code = 1;
+  string message = 2;
+}

@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -11,6 +12,8 @@ const defaultEnvFilePath = ".env"
 
 type Config struct {
 	Port         string
+	GRPCPort     string
+	GRPCEnabled  bool
 	GeminiAPIKey string
 	DBCfg        DBConfig
 }
@@ -33,6 +36,8 @@ func getEnvPath(path string) string {
 func LoadConfig() Config {
 	pathEnv := os.Getenv("CONFIG_PATH")
 	portKey := "PORT"
+	gRPCPortKey := "GRPC_PORT"
+	grpcEnabledKey := "GRPC_ENABLED"
 	geminiAPIKey := "GEMINI_API_KEY"
 	dbUrlKey := "DB_URL"
 	dbDatabaseKey := "DB_DATABASE"
@@ -44,9 +49,13 @@ func LoadConfig() Config {
 		log.Fatal("Error loading .env file")
 	}
 
-	port := os.Getenv(portKey)
-	if port == "" {
-		port = ":3000"
+	port := getEnvWithDefault(portKey, ":3000")
+	grpcPort := getEnvWithDefault(gRPCPortKey, ":9000")
+
+	grpcEnabledStr := os.Getenv(grpcEnabledKey)
+	grpcEnabled, err := strconv.ParseBool(grpcEnabledStr)
+	if err != nil {
+		log.Fatal("GRPC_ENABLED ENV is not boolean type")
 	}
 
 	geminiAPIValue := os.Getenv(geminiAPIKey)
@@ -56,6 +65,8 @@ func LoadConfig() Config {
 
 	return Config{
 		Port:         port,
+		GRPCPort:     grpcPort,
+		GRPCEnabled:  grpcEnabled,
 		GeminiAPIKey: geminiAPIValue,
 
 		DBCfg: DBConfig{
@@ -65,4 +76,11 @@ func LoadConfig() Config {
 			DBPassword: os.Getenv(dbPwdKey),
 		},
 	}
+}
+
+func getEnvWithDefault(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
 }

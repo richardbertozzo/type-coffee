@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"net"
 	"net/http"
 
 	"github.com/getkin/kin-openapi/openapi3filter"
@@ -10,8 +11,10 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	openapiMiddleware "github.com/oapi-codegen/nethttp-middleware"
 	"github.com/richardbertozzo/type-coffee/internal/config"
+	"google.golang.org/grpc"
 
 	"github.com/richardbertozzo/type-coffee/coffee"
+	pb "github.com/richardbertozzo/type-coffee/coffee/api"
 	"github.com/richardbertozzo/type-coffee/coffee/handler"
 	"github.com/richardbertozzo/type-coffee/coffee/provider"
 	"github.com/richardbertozzo/type-coffee/coffee/usecase"
@@ -33,40 +36,59 @@ func main() {
 		db = provider.NewDatabase(dbPool)
 	}
 
-	swagger, err := coffee.GetSwagger()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	swagger.Servers = nil
-
 	geminiCli, err := provider.NewGeminiClient(cfg.GeminiAPIKey)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	uc := usecase.New(geminiCli, db)
-	h := handler.NewHandler(uc)
 
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(openapiMiddleware.OapiRequestValidatorWithOptions(
-		swagger,
-		&openapiMiddleware.Options{
-			Options: openapi3filter.Options{
-				ExcludeRequestBody:    true,
-				ExcludeResponseBody:   true,
-				IncludeResponseStatus: true,
-				MultiError:            false,
+	if cfg.GRPCEnabled {
+		grpcH := handler.NewGrpcHandler(uc)
+
+		lis, err := net.Listen("tcp", cfg.GRPCPort)
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+
+		var opts []grpc.ServerOption
+		s := grpc.NewServer(opts...)
+		pb.RegisterCoffeeServiceServer(s, grpcH)
+
+		log.Printf("gRPC server listening on %v \n", lis.Addr())
+		if err := s.Serve(lis); err != nil {
+			log.Fatalf("failed to serve gRPC: %v", err)
+		}
+	} else {
+		swagger, err := coffee.GetSwagger()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		swagger.Servers = nil
+
+		httpH := handler.NewHTTPHandler(uc)
+
+		r := chi.NewRouter()
+		r.Use(middleware.Logger)
+		r.Use(openapiMiddleware.OapiRequestValidatorWithOptions(
+			swagger,
+			&openapiMiddleware.Options{
+				Options: openapi3filter.Options{
+					ExcludeRequestBody:    true,
+					ExcludeResponseBody:   true,
+					IncludeResponseStatus: true,
+					MultiError:            false,
+				},
 			},
-		},
-	))
+		))
 
-	coffee.HandlerFromMux(h, r)
+		coffee.HandlerFromMux(httpH, r)
 
-	log.Printf("http server runs on %s \n", cfg.Port)
-	err = http.ListenAndServe(cfg.Port, r)
-	if err != nil {
-		log.Fatalf("error on start http server %v", err)
+		log.Printf("http server runs on %s \n", cfg.Port)
+		err = http.ListenAndServe(cfg.Port, r)
+		if err != nil {
+			log.Fatalf("error on start http server %v", err)
+		}
 	}
 }
