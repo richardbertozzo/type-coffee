@@ -12,7 +12,7 @@ type handlerHttp struct {
 	service coffee.UseCase
 }
 
-func NewHandler(s coffee.UseCase) *handlerHttp {
+func NewHTTPHandler(s coffee.UseCase) *handlerHttp {
 	return &handlerHttp{
 		service: s,
 	}
