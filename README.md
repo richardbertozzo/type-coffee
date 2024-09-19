@@ -43,16 +43,28 @@ go run cmd/etl/main.go --DATABASE_URL <database_url>
 
 ### API
 
-Set up your local `.env` file using the file `.env.example`. Then you can start the HTTP API, run the following command:
+To get started, set up your local environment by copying `.env.example` to `.env` and configuring the necessary variables.
+
+You can choose to run either an **HTTP REST API** or a **gRPC server**:
+
+- HTTP REST API: Runs by default unless gRPC is enabled.
+- gRPC Server: To enable gRPC, set the `GRPC_ENABLED` variable to true in your `.env` file.
+
+Once you've configured your environment, start the server using the following command:
 
 ```shell
 make run
 ```
 
-This will start the API server on port `3000`.
-You can then find the full OpenAPI/Swagger spec definition [here](./api/openapi.yaml), or you can send a request to the following endpoint:
+The application will launch the selected server (HTTP or gRPC) on the default port, or on a custom port defined in your `.env` file.
 
-`GET /v1/best-coffees`: Returns the best type of coffee based on user given characteristics.
+#### For API documentation:
+
+- The full [OpenAPI/Swagger spec](./api/openapi.yaml) is available for the HTTP API.
+- The gRPC service uses the [protobuf definition](./api/coffee.proto).
+
+**Example Endpoint:**
+`GET /v1/best-coffees`: Retrieves the best type of coffee based on user-provided characteristics.
 
 ### CLI
 To start the command line interface, run the following command:
