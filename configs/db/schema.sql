@@ -1,4 +1,4 @@
-CREATE TABLE coffee
+CREATE TABLE IF NOT EXISTS coffee
 (
     id                UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     specie            VARCHAR(50) NOT NULL,
