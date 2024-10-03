@@ -27,7 +27,9 @@ func main() {
 		log.Fatal("DATABASE_URL ENV is required")
 	}
 
-	ctx := context.Background()
+	ctx, cancelFn := context.WithTimeout(context.Background(), time.Minute)
+	defer cancelFn()
+
 	dbPool, err := database.NewConnection(ctx, *dbURL)
 	if err != nil {
 		log.Fatal(err)
@@ -37,26 +39,39 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// open sql table schema file and apply it
+	sqlSchema, err := os.ReadFile("./configs/db/schema.sql")
+	if err != nil {
+		log.Fatalf("error opening SQL schema file: %v", err)
+	}
+	if _, err = dbPool.Exec(ctx, string(sqlSchema)); err != nil {
+		log.Fatal(err)
+	}
+
 	queries := provider.New(dbPool)
 
-	err = run(queries, *flagFile)
+	err = run(ctx, queries, *flagFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func run(queries *provider.Queries, filePath string) error {
-	f, csvReader, err := CSVReader(filePath)
+func run(ctx context.Context, queries *provider.Queries, filePath string) error {
+	f, reader, err := csvReader(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
+
+	defer func() {
+		_ = f.Close()
+	}()
 
 	isHeaderRow := true
 	recordsInserted := 0
 	start := time.Now()
+
 	for {
-		record, err := csvReader.Read()
+		record, err := reader.Read()
 		if err != nil {
 			// no more rows in the file
 			if err == io.EOF {
@@ -72,7 +87,7 @@ func run(queries *provider.Queries, filePath string) error {
 		}
 
 		coffee := createCoffeeFromCSVRow(record)
-		id, err := queries.InsertCoffee(context.Background(), provider.InsertCoffeeParams{
+		id, err := queries.InsertCoffee(ctx, provider.InsertCoffeeParams{
 			Specie:          coffee.Specie,
 			Owner:           coffee.Owner,
 			CountryOfOrigin: coffee.CountryOfOrigin,
@@ -96,7 +111,7 @@ func run(queries *provider.Queries, filePath string) error {
 		recordsInserted++
 	}
 
-	log.Printf("finished processing rows csv file, total: %d - duration %v", recordsInserted, time.Now().Sub(start))
+	log.Printf("finished processing rows csv file, total: %d - duration %v", recordsInserted, time.Now().Sub(start).Minutes())
 	return nil
 }
 
@@ -127,7 +142,7 @@ func createCoffeeFromCSVRow(row []string) provider.Coffee {
 	}
 }
 
-func CSVReader(pathFile string) (*os.File, *csv.Reader, error) {
+func csvReader(pathFile string) (*os.File, *csv.Reader, error) {
 	file, err := os.Open(pathFile)
 	if err != nil {
 		return nil, nil, err
