@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/csv"
+	"errors"
 	"flag"
 	"io"
 	"log"
@@ -74,7 +75,7 @@ func run(ctx context.Context, queries *provider.Queries, filePath string) error 
 		record, err := reader.Read()
 		if err != nil {
 			// no more rows in the file
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break
 			}
 			return err
