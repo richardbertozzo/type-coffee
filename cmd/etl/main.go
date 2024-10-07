@@ -9,6 +9,8 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/google/uuid"
@@ -51,13 +53,10 @@ func main() {
 
 	queries := provider.New(dbPool)
 
-	err = run(ctx, queries, *flagFile)
-	if err != nil {
-		log.Fatal(err)
-	}
+	run(ctx, queries, *flagFile)
 }
 
-func run(ctx context.Context, queries *provider.Queries, filePath string) error {
+func run(ctx context.Context, queries *provider.Queries, filePath string) {
 	f, reader, err := csvReader(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -68,26 +67,77 @@ func run(ctx context.Context, queries *provider.Queries, filePath string) error 
 	}()
 
 	isHeaderRow := true
-	recordsInserted := 0
+	var recordsInserted atomic.Uint32
 	start := time.Now()
 
-	for {
-		record, err := reader.Read()
-		if err != nil {
-			// no more rows in the file
-			if errors.Is(err, io.EOF) {
-				break
+	const numWorkers = 10
+	done := make(chan bool)
+	jobs := make(chan job, numWorkers)
+	results := make(chan result, numWorkers)
+
+	go func() {
+		var wg sync.WaitGroup
+		wg.Add(numWorkers)
+		for w := 1; w <= numWorkers; w++ {
+			go workerInsert(ctx, &wg, queries, jobs, results)
+		}
+		wg.Wait()
+		close(results)
+	}()
+
+	go func() {
+		for {
+			record, err := reader.Read()
+			if err != nil {
+				// no more rows in the file
+				if errors.Is(err, io.EOF) {
+					break
+				}
+
+				log.Fatalf("error reading record row: %v", err)
+				return
 			}
-			return err
+
+			// skip the header row (first row)
+			if isHeaderRow {
+				isHeaderRow = false
+				continue
+			}
+
+			jobs <- job{
+				record: record,
+			}
 		}
 
-		// skip the header row (first row)
-		if isHeaderRow {
-			isHeaderRow = false
-			continue
-		}
+		close(jobs)
+	}()
 
-		coffee := createCoffeeFromCSVRow(record)
+	go func() {
+		for r := range results {
+			recordsInserted.Add(1)
+			log.Printf("coffee inserted, id: %s - specie %s", r.ID, r.Specie)
+		}
+		done <- true
+	}()
+
+	<-done
+	close(done)
+	log.Printf("finished processing rows csv file, total: %d - duration %v", recordsInserted.Load(), time.Now().Sub(start).Minutes())
+}
+
+type job struct {
+	id     string
+	record []string
+}
+
+type result struct {
+	ID     string
+	Specie string
+}
+
+func workerInsert(ctx context.Context, wg *sync.WaitGroup, queries *provider.Queries, jobChan chan job, results chan<- result) {
+	for j := range jobChan {
+		coffee := createCoffeeFromCSVRow(j.record)
 		id, err := queries.InsertCoffee(ctx, provider.InsertCoffeeParams{
 			Specie:          coffee.Specie,
 			Owner:           coffee.Owner,
@@ -104,16 +154,20 @@ func run(ctx context.Context, queries *provider.Queries, filePath string) error 
 			log.Fatal(err)
 		}
 
-		u, err := uuid.FromBytes(id.Bytes[0:16])
+		u, err := uuid.FromBytes(id.Bytes[:])
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		log.Printf("coffee inserted, id: %s - specie %s", u.String(), coffee.Specie)
-		recordsInserted++
+
+		results <- result{
+			ID:     u.String(),
+			Specie: coffee.Specie,
+		}
 	}
 
-	log.Printf("finished processing rows csv file, total: %d - duration %v", recordsInserted, time.Now().Sub(start).Minutes())
-	return nil
+	wg.Done()
 }
 
 func parseStrToFloat(strValue string) float32 {
